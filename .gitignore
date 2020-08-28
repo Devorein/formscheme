@@ -1,0 +1,8 @@
+/node_modules
+/experiment
+**/*.log
+**/*.txt
+feature.md
+/dist
+*.tgz
+package.lock.json
