@@ -1,33 +1,38 @@
 {
   "name": "formscheme",
-  "version": "1.0.0",
-  "main": "dist/src/index.js",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "description": "Convert JSON Schema to functional react form components",
   "scripts": {
-    "build": "npm run clean && npm run emit-declarations && npx tsc --removeComments",
-    "build:watch": "npx tsc --incremental true -w",
-    "clean": "npx rimraf ./dist",
-    "emit-declarations": "npx tsc --declaration",
-    "lint": "npx eslint --ext .ts,.js src/ --fix --color",
-    "prepack": "npm run test_build",
-    "prepublishOnly": "npm run test_build",
-    "test": "npm run test:unit && npm run test:integration",
-    "test:integration": "npx jest --runInBand ./tests/integration",
-    "test:unit": "npx jest --runInBand ./tests/unit",
-    "test_build": "npm run test && npm run build",
-    "transpile": "npx babel src --out-dir dist --extensions .ts",
-    "typecheck": "npx tsc --noEmit --incremental false",
-    "preversion": "npm run test"
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build"
   },
   "keywords": [],
   "author": "Devon Reid <devorein00@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "formik": "^2.1.5"
+    "formik": "^2.1.5",
+    "tsdx": "^0.13.3"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=12"
   },
   "devDependencies": {
     "@types/eslint": "^7.2.1",
     "@types/jest": "^26.0.10",
+    "@types/react": "^16.9.48",
+    "@types/react-dom": "^16.9.8",
+    "@types/rimraf": "^3.0.0",
+    "@types/yup": "^0.29.6",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
     "eslint": "^7.7.0",
@@ -37,16 +42,32 @@
     "jest": "^26.4.2",
     "lint-staged": "^10.2.13",
     "nodemon": "^2.0.4",
+    "rimraf": "^3.0.2",
     "sort-package-json": "^1.44.0",
     "ts-jest": "^26.3.0",
+    "ts-loader": "^8.0.3",
     "typescript": "^4.0.2",
-    "@types/rimraf": "^3.0.0",
-    "rimraf": "^3.0.2"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "tsdx": "^0.13.3",
+    "tslib": "^2.0.1"
   },
   "peerDependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
   }
 }

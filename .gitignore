@@ -6,3 +6,5 @@ feature.md
 /dist
 *.tgz
 package.lock.json
+.DS_Store
+.cache

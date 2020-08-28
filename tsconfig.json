@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ESNext",
+    "target": "esnext",
     "outDir": "dist",
+    "jsx": "react",
     "lib": [
-      "ESNext",
+      "esnext",
       "dom"
     ],
     "noImplicitAny": true,
@@ -14,7 +15,9 @@
     "strict": true,
     "isolatedModules": true,
     "declaration": true,
+    "importHelpers": true,
     "baseUrl": ".",
+    "rootDir": "./src",
     "sourceMap": true,
     "paths": {
       "*": [
@@ -22,9 +25,15 @@
         "src/types/*"
       ]
     },
-    "incremental": true
+    "jsx": "react",
+    "incremental": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "types"
   ]
 }
