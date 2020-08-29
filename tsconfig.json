@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "module": "esnext",
+    "module": "ESNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "esnext",
+    "target": "ESNext",
     "outDir": "dist",
     "lib": [
-      "esnext",
+      "ESNext",
       "dom"
     ],
     "noImplicitAny": true,

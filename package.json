@@ -2,14 +2,14 @@
   "name": "formscheme",
   "version": "0.0.1",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/formscheme.esm.js",
   "typings": "dist/index.d.ts",
-  "description": "Convert JSON Schema to functional react form components",
+  "description": "Functional react form components from JSON Schema",
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint src",
     "prepare": "tsdx build"
   },
   "keywords": [],
