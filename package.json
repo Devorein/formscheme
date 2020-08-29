@@ -16,8 +16,7 @@
   "author": "Devon Reid <devorein00@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "formik": "^2.1.5",
-    "tsdx": "^0.13.3"
+    "formik": "^2.1.5"
   },
   "files": [
     "dist",

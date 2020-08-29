@@ -1,39 +1,66 @@
-import * as Yup from "yup";
-import { ReactElement, ReactNode } from 'react';
-import { FormikTouched, FormikValues } from 'formik/dist/types';
+import { ReactElement, ReactNode, BaseSyntheticEvent } from 'react';
+import { FormikTouched, FormikConfig, FormikProps, FormikErrors } from 'formik/dist/types';
 
-export type FormElementType = 'checkbox' | 'select' | 'multiselect' | 'radio' | 'group' | 'text' | 'number' | 'component';
+export type FormElementType = 'checkbox' | 'select' | 'multiselect' | 'radio' | 'group' | 'text' | 'number' | 'component' | 'slider' | 'textarea';
+export type GroupType = 'checkbox' | 'select' | 'radio' | 'text' | 'number'
+export interface SelectItems {
+  value: any,
+  label: string,
+  icon: any
+}
+
+export interface RadioItems {
+  value: any,
+  label: string,
+}
 
 export interface FormSchemeInput {
   disabled: boolean,
   className: string | string[],
   children: null | FormSchemeInputs,
+  placeholder: string,
   type: FormElementType,
   helperText: undefined | string,
   errorText: undefined | string,
   defaultValue: any,
   label: undefined | string,
   name: string,
+  controlled: boolean,
+  onkeyPress: () => any,
+  fieldHandler: () => any,
+  siblings: FormSchemeInput[]
   extra: {
     append: boolean,
-    useArray: boolean
-  }
+    useArray: boolean,
+    selectItems: SelectItems[],
+    radioItems: RadioItems[],
+    row: number,
+    groupType: GroupType,
+    treeView: boolean,
+    collapse: boolean
+  },
+  key: string,
+  component: JSX.Element
 }
 
 export type FormSchemeInputs = FormSchemeInput[];
 
-export interface InputFormProps {
-  validationSchema: Yup.ObjectSchema,
+export interface InputFormProps<Values> extends FormikConfig<Values> {
   inputs: FormSchemeInputs,
-  onSubmit: () => any,
-  customHandler: () => any,
+  customHandler: (values: Record<string, any>, setValues: (values: Record<string, any>, shouldValidate?: boolean | undefined) => void, e: BaseSyntheticEvent) => any,
   formButtons: boolean,
   classNames: string | string[],
-  validateOnMount: boolean,
   errorBeforeTouched: boolean,
   submitMsg: string | undefined,
+  resetMsg: string | undefined,
   children: ReactNode | ((props: any) => ReactElement<any> | null),
   passFormAsProp: boolean,
-  initialTouched: FormikTouched<FormikValues>,
   disabled: boolean,
+}
+
+export interface FormProps<Values> extends InputFormProps<Values>, FormikProps<Values> {
+  initialValues: Values,
+  initialStatus: any;
+  initialErrors: FormikErrors<Values>;
+  initialTouched: FormikTouched<Values>;
 }

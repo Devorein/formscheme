@@ -5,7 +5,6 @@
     "allowSyntheticDefaultImports": true,
     "target": "esnext",
     "outDir": "dist",
-    "jsx": "react",
     "lib": [
       "esnext",
       "dom"
@@ -29,7 +28,7 @@
     "incremental": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
   },
   "include": [
