@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import Form from './Form';
 import { InputFormProps, FormSchemeInput } from './types';
 
-function InputForm (props: InputFormProps) {
+function InputForm (props: InputFormProps<Record<string, any>>) {
 	const populateInitialValue = () => {
 		const { validationSchema, inputs } = props;
 		const initialValues: Record<string, any> = {};

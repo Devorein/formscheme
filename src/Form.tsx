@@ -12,26 +12,27 @@ import Checkbox from '@material-ui/core/Checkbox';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
-// import InputAdornment from '@material-ui/core/InputAdornment';
-/* import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import IconButton from '@material-ui/core/IconButton'; */
-import TreeView from '@material-ui/lab/TreeView';
-import TreeItem from '@material-ui/lab/TreeItem';
 import Icon from '@material-ui/core/Icon';
-/* import EmailIcon from '@material-ui/icons/Email';
-import PersonIcon from '@material-ui/icons/Person';
-import ImageIcon from '@material-ui/icons/Image';
-import CancelIcon from '@material-ui/icons/Cancel'; */
+import Tooltip from '@material-ui/core/Tooltip';
+import Slider from '@material-ui/core/Slider';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import TreeView from '@material-ui/lab/TreeView';
+import TreeItem from '@material-ui/lab/TreeItem';
 
-import CheckboxGroup from './components/Checkbox/CheckboxGroup';
-import TextInputGroup from './components/TextInput/TextInputGroup';
 // import CustomSlider from '../Input/Slider';
 import { FormProps, FormSchemeInput } from './types';
 
 import './Form.scss';
+
+function ValueLabelComponent (props: any) {
+	const { children, open, value } = props;
+	return (
+		<Tooltip open={open} enterTouchDelay={0} placement="top" title={value}>
+			{children}
+		</Tooltip>
+	);
+}
 
 function Form (props: FormProps<Record<string, any>>) {
 	const decideLabel = (name: string, label: string | undefined) => {
@@ -55,14 +56,9 @@ function Form (props: FormProps<Record<string, any>>) {
 		setFieldTouched(e.target.name, true, false);
 	};
 
-	const formikProps = (
-		name: string,
-		label: string | undefined,
-		placeholder: string,
-		controlled: boolean,
-		{ onkeyPress, fieldHandler }: { onkeyPress: any; fieldHandler: any }
-	) => {
+	const formikProps = (input: FormSchemeInput) => {
 		const { values, handleBlur, touched, errors, errorBeforeTouched } = props;
+		const { disabled, name, label, placeholder, controlled, onkeyPress, fieldHandler } = input;
 		if (controlled)
 			return {
 				name,
@@ -71,8 +67,9 @@ function Form (props: FormProps<Record<string, any>>) {
 				onBlur: handleBlur,
 				error: errorBeforeTouched ? Boolean(errors[name]) : touched[name] && Boolean(errors[name]),
 				helperText: errorBeforeTouched ? errors[name] : touched[name] ? errors[name] : '',
-				label: decideLabel(name, label),
-				placeholder
+				label,
+				placeholder,
+				disabled
 			};
 		else
 			return {
@@ -83,48 +80,24 @@ function Form (props: FormProps<Record<string, any>>) {
 			};
 	};
 
-	/* const decideIcon = (icon: string, onClick: ()=>any) => {
-		if (icon === 'email') return <EmailIcon onClick={onClick} />;
-		else if (icon === 'person') return <PersonIcon onClick={onClick} />;
-		else if (icon === 'image') return <ImageIcon onClick={onClick} />;
-    else if (icon === 'close' || icon === 'cancel') return <CancelIcon onClick={onClick} />;
-    else return <ImageIcon onClick={onClick} />;
-	}; */
-
-	/* const decideAdornment = (name, InputProps, startAdornment, endAdornment) => {
-		if (InputProps) return InputProps;
-		else if (startAdornment) return {startAdornment: <InputAdornment position="start">{decideIcon(startAdornment)}</InputAdornment>}
-		else if (endAdornment)
-			return {
-				endAdornment:
-					(
-						<InputAdornment position="end">
-							{decideIcon(endAdornment[0], endAdornment[1].bind(null, name))}
-						</InputAdornment>
-					)
-			};
-	}; */
-
 	const renderFormComponent = (input: FormSchemeInput) => {
 		const { values, handleBlur } = props;
 		const {
 			name,
 			label,
-			placeholder,
 			defaultValue,
 			type = 'text',
 			helperText,
 			disabled,
 			siblings,
-			controlled = true,
-			onkeyPress,
 			fieldHandler,
 			component,
-			extra
+			extra: { min, max, step, selectItems, radioItems, row },
+			key
 		} = input;
 		if (type === 'component') return component;
 		else if (type === 'select') {
-			if (!extra.selectItems) throw new Error('Select component must have select items');
+			if (!selectItems) throw new Error('Select component must have select items');
 			return (
 				<Fragment key={name}>
 					<FormControl disabled={disabled ? disabled : false} fullWidth>
@@ -132,7 +105,7 @@ function Form (props: FormProps<Record<string, any>>) {
 							<Fragment>
 								<InputLabel id={name}>{decideLabel(name, label)}</InputLabel>
 								<Select name={name} value={values[name]} onChange={change.bind(null, fieldHandler)}>
-									{extra.selectItems.map(({ value, label, icon }) => {
+									{selectItems.map(({ value, label, icon }) => {
 										return (
 											<MenuItem key={value ? value : label} value={value ? value : label}>
 												{icon ? <Icon>{icon}</Icon> : null}
@@ -149,19 +122,16 @@ function Form (props: FormProps<Record<string, any>>) {
 				</Fragment>
 			);
 		} else if (type === 'slider') {
-			/* 			return (
-				<Fragment key={name}>
-					<FormLabel component="legend">{decideLabel(name)}</FormLabel>
-					<CustomSlider
-						name={name}
-						value={values[name]}
-						onChange={(e, value) => {
-							setValues({ ...values, [name]: value });
-						}}
-						valueLabelDisplay="auto"
-					/>
-				</Fragment>
-			); */
+			<Slider
+				key={key}
+				value={values[name]}
+				min={min}
+				max={max}
+				step={step}
+				ValueLabelComponent={ValueLabelComponent}
+				onChangeCommitted={change.bind(null, fieldHandler)}
+				name={name}
+			/>;
 		} else if (type === 'checkbox') {
 			return (
 				<Fragment key={name}>
@@ -176,25 +146,22 @@ function Form (props: FormProps<Record<string, any>>) {
 								// error={touched[name] && errors[name]}
 							/>
 						}
-						label={decideLabel(name, label)}
+						label={label}
 					/>
 					{siblings ? siblings.map((sibling) => formComponentRenderer(sibling)) : null}
 				</Fragment>
 			);
 		} else if (type === 'radio') {
-			const props = formikProps(name, label, placeholder, controlled, {
-				fieldHandler,
-				onkeyPress
-			});
-			if (!extra.radioItems) throw new Error('Radio component must have radio items');
+			const props = formikProps(input);
+			if (!radioItems) throw new Error('Radio component must have radio items');
 			delete props.helperText;
 			delete props.error;
 			return (
 				<Fragment key={name}>
 					<FormControl>
-						<FormLabel component="legend">{decideLabel(name, label)}</FormLabel>
+						<FormLabel component="legend">{label}</FormLabel>
 						<RadioGroup row {...props} defaultValue={defaultValue}>
-							{extra.radioItems.map(({ label, value }) => (
+							{radioItems.map(({ label, value }) => (
 								<FormControlLabel
 									key={value}
 									control={<Radio color="primary" />}
@@ -214,10 +181,7 @@ function Form (props: FormProps<Record<string, any>>) {
 					<TextField
 						defaultValue={defaultValue}
 						type={'number'}
-						{...formikProps(name, label, placeholder, controlled, {
-							onkeyPress,
-							fieldHandler
-						})}
+						{...formikProps(input)}
 						fullWidth
 						// inputProps={{ ...inputProps }}
 					/>
@@ -227,113 +191,46 @@ function Form (props: FormProps<Record<string, any>>) {
 		else if (type === 'textarea')
 			return (
 				<Fragment key={name}>
-					<TextField
-						type={'text'}
-						multiline
-						rows={extra.row || 5}
-						{...formikProps(name, label, placeholder, controlled, {
-							onkeyPress,
-							fieldHandler
-						})}
-						fullWidth
-					/>
+					<TextField type={'text'} multiline rows={row || 5} {...formikProps(input)} fullWidth />
 					{siblings ? siblings.map((sibling) => formComponentRenderer(sibling)) : null}
 				</Fragment>
 			);
 		else
-			/* name.toLowerCase().includes('password') ? (
-				<Fragment key={name}>
-					<TextField
-						type={this.state.showPassword ? 'text' : 'password'}
-						{...formikProps(name, label, placeholder, controlled, {
-							fieldHandler
-						})}
-						fullWidth
-						InputProps={{
-							endAdornment:
-								(
-									<InputAdornment position="end">
-										<IconButton aria-label="toggle password visibility" onClick={this.handleClickShowPassword}>
-											{this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-										</IconButton>
-									</InputAdornment>
-								)
-						}}
-					/>
-					{siblings ? siblings.map((sibling) => formComponentRenderer(sibling)) : null}
-				</Fragment>
-			) : */
 			return (
 				<Fragment key={name}>
-					<TextField
-						type={'text'}
-						{...formikProps(name, label, placeholder, controlled, {
-							onkeyPress,
-							fieldHandler
-						})}
-						fullWidth
-					/>
+					<TextField type={'text'} {...formikProps(input)} fullWidth />
 					{siblings ? siblings.map((sibling) => formComponentRenderer(sibling)) : null}
 				</Fragment>
 			);
 	};
 
 	const formComponentRenderer = (input: FormSchemeInput) => {
-		if (input.type === 'group') {
-			if (!input.children) throw new Error('Grouped components must have children components');
-			const { values, errors, setValues } = props;
-			const groupName = input.name;
-			const { groupType } = input.extra;
-			if (groupType === 'checkbox') {
-				return (
-					<CheckboxGroup
-						key={input.key || groupName}
-						name={groupName}
-						extra={{ ...input.extra, errorText: errors[groupName] }}
-						children={input.children}
-						onChange={(index: any, e: BaseSyntheticEvent<any>) => {
-							values[groupName][index] = e.target.checked;
-							setValues({ ...values });
-						}}
-						values={values[groupName]}
-						label={input.label}
-					/>
-				);
-			} else if (groupType === 'text') {
-				return (
-					<TextInputGroup
-						key={input.key || groupName}
-						onChange={(childname, e) => {
-							values[childname] = e.target.value;
-							setValues({ ...values });
-						}}
-						extra={{ ...input.extra }}
-						errors={errors}
-						name={groupName}
-						children={input.children}
-						values={values}
-						label={input.label}
-					/>
-				);
-			} else if (input.extra.treeView)
-				return (
-					<TreeView
-						key={input.key || input.name}
-						defaultCollapseIcon={<ExpandMoreIcon />}
-						defaultExpandIcon={<ChevronRightIcon />}
-						defaultExpanded={[ input.extra.collapse ? '0' : '1' ]}
-					>
-						<TreeItem nodeId="1" label={decideLabel(input.name, input.label)}>
-							<FormGroup row={false}>{input.children.map((child) => renderFormComponent(child))}</FormGroup>
-						</TreeItem>
-					</TreeView>
-				);
-			else
-				return (
-					<FormGroup row={true} key={input.name}>
-						{input.children.map((child) => renderFormComponent(child))}
-					</FormGroup>
-				);
+		const { key, children, type, helperText, errorText, className, label, extra } = input;
+		if (type === 'group') {
+			if (!children) throw new Error('Grouped components must have children components');
+			return (
+				<div className={className}>
+					<div>{label}</div>
+					{helperText !== '' ? <FormHelperText>{helperText}</FormHelperText> : null}
+					{errorText !== '' ? <FormHelperText error={true}>{errorText}</FormHelperText> : null}
+					{extra.treeView ? (
+						<TreeView
+							key={key}
+							defaultCollapseIcon={<ExpandMoreIcon />}
+							defaultExpandIcon={<ChevronRightIcon />}
+							defaultExpanded={[ extra.collapse ? '0' : '1' ]}
+						>
+							<TreeItem nodeId="1" label={label}>
+								<FormGroup row={false}>{children.map((child) => renderFormComponent(child))}</FormGroup>
+							</TreeItem>
+						</TreeView>
+					) : (
+						<FormGroup row={true} key={key}>
+							{children.map((child) => renderFormComponent(child))}
+						</FormGroup>
+					)}
+				</div>
+			);
 		} else return renderFormComponent(input);
 	};
 

@@ -16,7 +16,7 @@ export interface RadioItems {
 
 export interface FormSchemeInput {
   disabled: boolean,
-  className: string | string[],
+  className: string | undefined,
   children: null | FormSchemeInputs,
   placeholder: string,
   type: FormElementType,
@@ -37,7 +37,10 @@ export interface FormSchemeInput {
     row: number,
     groupType: GroupType,
     treeView: boolean,
-    collapse: boolean
+    collapse: boolean,
+    min: number,
+    max: number,
+    step: number
   },
   key: string,
   component: JSX.Element
@@ -60,7 +63,7 @@ export interface InputFormProps<Values> extends FormikConfig<Values> {
 
 export interface FormProps<Values> extends InputFormProps<Values>, FormikProps<Values> {
   initialValues: Values,
-  initialStatus: any;
+  initialStatus?: any;
   initialErrors: FormikErrors<Values>;
   initialTouched: FormikTouched<Values>;
 }
