@@ -7,7 +7,7 @@ import Form from './Form';
 import {
   FormSchemePropsPartial,
   FormSchemeInputPartial,
-  FormSchemeInputFull,
+  // FormSchemeInputFull,
 } from './types';
 import {
   generateFormSchemeInputDefaultConfigs,
@@ -24,7 +24,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
 
     function inner(
       input: FormSchemeInputPartial,
-      parents: FormSchemeInputFull[] = [],
+      parents: Record<string, any>,
       index: number
     ) {
       const GeneratedFormSchemeInputConfigs = generateFormSchemeInputDefaultConfigs(
@@ -36,27 +36,38 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         children,
         name,
         defaultValue,
+        extra,
       } = GeneratedFormSchemeInputConfigs;
-      if (type === 'group')
+
+      if (type === 'group') {
+        initialErrors[name] = {};
+        if (extra.useObject) initialValues[name] = {};
+        else if (extra.useArray) initialValues[name] = [];
         children.forEach((child, index) =>
-          inner(child, [...parents, GeneratedFormSchemeInputConfigs], index)
+          inner(
+            child,
+            extra.append
+              ? { values: initialValues[name], errors: initialErrors[name] }
+              : { values: initialValues, errors: initialErrors },
+            index
+          )
         );
-      else {
-        const parent = parents[parents.length - 1];
-        const field_key =
-          `${parent?.extra?.useObject || ''}` +
-          (parent?.extra?.useArray ? index : name);
-        initialValues[field_key] = defaultValue || '';
+      } else {
+        parents.values[name] = defaultValue || '';
         try {
-          validationSchema.validateSyncAt(field_key, initialValues[field_key], {
+          validationSchema.validateSyncAt(defaultValue, parents.values[name], {
             abortEarly: true,
           });
         } catch (err) {
-          initialErrors[field_key] = err.message;
+          parents.errors[name] = err.message;
         }
       }
     }
-    inputs.forEach(input => (input ? inner(input, [], 0) : void 0));
+    inputs.forEach(input =>
+      input
+        ? inner(input, { values: initialValues, errors: initialErrors }, 0)
+        : void 0
+    );
 
     return { initialValues, initialErrors };
   };

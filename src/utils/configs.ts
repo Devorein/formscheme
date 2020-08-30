@@ -23,16 +23,19 @@ export function generateFormSchemeInputDefaultConfigs(
   input: FormSchemeInputPartial,
   index: number | undefined
 ) {
-  if (
-    input.type === 'group'
-  ) {
+  if (!input.extra) input.extra = {};
+
+  if (input.type === 'group') {
     if (!input.children || input.children.length === 0)
       throw new Error('Grouped FormScheme must have children components');
-    setObjectValues(input, [['treeView', true], ['collapse', false]])
-  }
-  else {
+    setObjectValues(input.extra, [
+      ['treeView', true],
+      ['collapse', false],
+      ['append', true],
+    ]);
+  } else {
     input.children = [];
-    setObjectValues(input, ['treeView', 'collapse'])
+    setObjectValues(input.extra, ['treeView', 'collapse', 'append']);
   }
 
   if (!input.name) throw new Error('Input name is required');
@@ -55,7 +58,6 @@ export function generateFormSchemeInputDefaultConfigs(
       .split('_')
       .map((c: string) => c.charAt(0).toUpperCase() + c.substr(1))
       .join(' ');
-  if (!input.extra) input.extra = {};
 
   setObjectValues(input.extra, [
     ['useObject', true],
