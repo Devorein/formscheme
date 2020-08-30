@@ -13,11 +13,11 @@
     "moduleResolution": "node",
     "strict": true,
     "isolatedModules": true,
-    "declaration": true,
     "importHelpers": true,
     "baseUrl": ".",
     "rootDir": "./src",
-    "sourceMap": true,
+    "declaration": false,
+    "sourceMap": false,
     "paths": {
       "*": [
         "node_modules/*",

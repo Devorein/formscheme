@@ -9,6 +9,8 @@ export function generateFormSchemeInputDefaultConfigs(
   input: FormSchemeInputPartial,
   index: number | undefined
 ) {
+  if (input.type === 'group' && (!input.children || input.children.length === 0)) throw new Error('Grouped FormScheme must have childrens');
+  else input.children = [];
   if (!input.name) throw new Error('Input name is required');
   if (!input.disabled) input.disabled = false;
   if (!input.className) input.className = undefined;

@@ -32,7 +32,7 @@ export interface RadioItems {
 export interface FormSchemeInputFull {
   disabled: boolean;
   className: string | undefined;
-  children: undefined | FormSchemeInputsFull;
+  children: [] | FormSchemeInputsFull;
   placeholder: string;
   type: FormElementType;
   helperText: undefined | string;
@@ -119,15 +119,15 @@ export interface FormSchemePropsPartial<Values> extends FormikConfig<Values> {
 export interface FormSchemePropsFull<Values> extends FormikConfig<Values> {
   inputs: FormSchemeInputsFull;
   customHandler:
-    | undefined
-    | ((
-        values: Record<string, any>,
-        setValues: (
-          values: Record<string, any>,
-          shouldValidate?: boolean | undefined
-        ) => void,
-        e: BaseSyntheticEvent
-      ) => any);
+  | undefined
+  | ((
+    values: Record<string, any>,
+    setValues: (
+      values: Record<string, any>,
+      shouldValidate?: boolean | undefined
+    ) => void,
+    e: BaseSyntheticEvent
+  ) => any);
   formButtons: boolean;
   classNames: undefined | string;
   errorBeforeTouched: boolean;
@@ -140,7 +140,7 @@ export interface FormSchemePropsFull<Values> extends FormikConfig<Values> {
 
 export interface FormPropsPartial<Values>
   extends FormSchemePropsPartial<Values>,
-    FormikProps<Values> {
+  FormikProps<Values> {
   initialValues: Values;
   initialStatus?: any;
   initialErrors: FormikErrors<Values>;
@@ -149,7 +149,7 @@ export interface FormPropsPartial<Values>
 
 export interface FormPropsFull<Values>
   extends FormSchemePropsFull<Values>,
-    FormikProps<Values> {
+  FormikProps<Values> {
   initialValues: Values;
   initialStatus?: any;
   initialErrors: FormikErrors<Values>;

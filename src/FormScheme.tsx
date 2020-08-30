@@ -37,19 +37,16 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         name,
         defaultValue,
       } = GeneratedFormSchemeInputConfigs;
-      const parent = parents[parents.length - 1];
-      if (type === 'group') {
-        if (children)
-          children.forEach((child, index) =>
-            inner(child, [...parents, GeneratedFormSchemeInputConfigs], index)
-          );
-        else throw new Error('Grouped FormScheme must have childrens');
-      } else {
+      if (type === 'group')
+        children.forEach((child, index) =>
+          inner(child, [...parents, GeneratedFormSchemeInputConfigs], index)
+        );
+      else {
+        const parent = parents[parents.length - 1];
         const field_key =
-          `${parent ? parent.extra.append : ''}` +
-          (parent ? parent.extra.useArray : name ? index : name);
-        initialValues[field_key] =
-          typeof defaultValue !== 'undefined' ? defaultValue : '';
+          `${parent?.extra?.append || ''}` +
+          (parent?.extra?.useArray ? index : name);
+        initialValues[field_key] = defaultValue || '';
         try {
           validationSchema.validateSyncAt(field_key, initialValues[field_key], {
             abortEarly: true,
