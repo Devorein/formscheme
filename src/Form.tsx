@@ -32,17 +32,6 @@ function ValueLabelComponent(props: any) {
 }
 
 function Form(props: FormPropsFull<Record<string, any>>) {
-  const decideLabel = (name: string, label: string | undefined) => {
-    if (label) return label;
-    else {
-      const last_name = name.split('.');
-      return last_name[last_name.length - 1]
-        .split('_')
-        .map(name => name.charAt(0).toUpperCase() + name.substr(1))
-        .join(' ');
-    }
-  };
-
   const change = (fieldHandler: (arg: any) => any, e: BaseSyntheticEvent) => {
     const { values, setValues, customHandler, setFieldTouched } = props;
     if (e.persist) e.persist();
@@ -87,7 +76,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         name,
         onKeyPress,
         onChange: fieldHandler,
-        label: decideLabel(name, label),
+        label,
       };
   };
 
@@ -113,7 +102,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           <FormControl disabled={disabled ? disabled : false} fullWidth>
             {!disabled ? (
               <Fragment>
-                <InputLabel id={name}>{decideLabel(name, label)}</InputLabel>
+                <InputLabel id={name}>{label}</InputLabel>
                 <Select
                   name={name}
                   value={values[name]}
@@ -249,19 +238,17 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       label,
       extra,
     } = input;
-    if (type === 'group') {
-      if (!children)
-        throw new Error('Grouped components must have children components');
-      return (
-        <div className={className}>
-          <div>{label}</div>
-          {helperText !== '' ? (
-            <FormHelperText>{helperText}</FormHelperText>
-          ) : null}
-          {errorText !== '' ? (
-            <FormHelperText error={true}>{errorText}</FormHelperText>
-          ) : null}
-          {extra.treeView ? (
+    return (
+      <div className={className}>
+        <div>{label}</div>
+        {helperText !== '' ? (
+          <FormHelperText>{helperText}</FormHelperText>
+        ) : null}
+        {errorText !== '' ? (
+          <FormHelperText error={true}>{errorText}</FormHelperText>
+        ) : null}
+        {type === 'group' ? (
+          extra.treeView ? (
             <TreeView
               key={key}
               defaultCollapseIcon={<ExpandMoreIcon />}
@@ -278,10 +265,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             <FormGroup row={true} key={key}>
               {children.map(child => renderFormComponent(child))}
             </FormGroup>
-          )}
-        </div>
-      );
-    } else return renderFormComponent(input);
+          )
+        ) : (
+          renderFormComponent(input)
+        )}
+      </div>
+    );
   };
 
   const {
