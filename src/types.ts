@@ -32,7 +32,7 @@ export interface RadioItems {
 export interface FormSchemeInputFull {
   disabled: boolean;
   className: string | undefined;
-  children: [] | FormSchemeInputsFull;
+  children: FormSchemeInputsFull;
   placeholder: string;
   type: FormElementType;
   helperText: undefined | string;

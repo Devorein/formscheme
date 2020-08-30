@@ -108,8 +108,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     } = input;
     if (type === 'component') return component;
     else if (type === 'select') {
-      if (!selectItems)
-        throw new Error('Select component must have select items');
       return (
         <Fragment key={name}>
           <FormControl disabled={disabled ? disabled : false} fullWidth>
@@ -176,7 +174,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       );
     } else if (type === 'radio') {
       const props = formikProps(input);
-      if (!radioItems) throw new Error('Radio component must have radio items');
       delete props.helperText;
       delete props.error;
       return (

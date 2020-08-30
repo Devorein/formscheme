@@ -9,7 +9,11 @@ export function generateFormSchemeInputDefaultConfigs(
   input: FormSchemeInputPartial,
   index: number | undefined
 ) {
-  if (input.type === 'group' && (!input.children || input.children.length === 0)) throw new Error('Grouped FormScheme must have childrens');
+  if (
+    input.type === 'group' &&
+    (!input.children || input.children.length === 0)
+  )
+    throw new Error('Grouped FormScheme must have childrens');
   else input.children = [];
   if (!input.name) throw new Error('Input name is required');
   if (!input.disabled) input.disabled = false;
@@ -31,8 +35,8 @@ export function generateFormSchemeInputDefaultConfigs(
   if (!input.extra) input.extra = {};
   if (!input.extra.append) input.extra.append = true;
   if (!input.extra.useArray) input.extra.useArray = false;
-  if (!input.extra.selectItems) input.extra.selectItems = undefined;
-  if (!input.extra.radioItems) input.extra.radioItems = undefined;
+  if (!input.extra.selectItems) input.extra.selectItems = [];
+  if (!input.extra.radioItems) input.extra.radioItems = [];
   if (!input.extra.row) input.extra.row = undefined;
   if (!input.extra.groupType) input.extra.groupType = undefined;
   if (!input.extra.treeView) input.extra.treeView = undefined;
@@ -42,6 +46,11 @@ export function generateFormSchemeInputDefaultConfigs(
   if (!input.extra.step) input.extra.step = undefined;
   if (!input.key) input.key = index ? input.name + index : input.name;
   if (!input.component) input.component = undefined;
+
+  if (input.type === 'radio' && input.extra.radioItems.length === 0)
+    throw new Error('Radio component must have radio items');
+  if (input.type === 'select' && input.extra.selectItems.length === 0)
+    throw new Error('Select component must have select items');
 
   return input as FormSchemeInputFull;
 }
