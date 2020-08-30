@@ -32,56 +32,11 @@ function ValueLabelComponent(props: any) {
 }
 
 function Form(props: FormPropsFull<Record<string, any>>) {
-  const change = (
-    fieldHandler: (arg: any) => any,
-    parent: Record<string, any>,
-    e: BaseSyntheticEvent
-  ) => {
-    const { setValues, customHandler, setFieldTouched } = props;
-    if (e.persist) e.persist();
-    parent[e.target.name] = e.target.value || e.target.checked;
-    setValues({ ...values });
-    if (fieldHandler) fieldHandler(e.target.value);
-    if (customHandler) customHandler(values, setValues, e);
-    setFieldTouched(e.target.name, true, false);
-  };
-
-  const formikProps = (
-    input: FormSchemeInputFull,
-    parent: Record<string, any>
-  ) => {
-    const { handleBlur } = props;
-    const {
-      disabled,
-      name,
-      label,
-      placeholder,
-      controlled,
-      onKeyPress,
-      fieldHandler,
-    } = input;
-    if (controlled)
-      return {
-        name,
-        value: parent[name],
-        onChange: change.bind(null, fieldHandler, parent),
-        onBlur: handleBlur,
-        label,
-        placeholder,
-        disabled,
-      };
-    else
-      return {
-        name,
-        onKeyPress,
-        onChange: fieldHandler,
-        label,
-      };
-  };
-
   const renderFormComponent = (
     input: FormSchemeInputFull,
-    parent: Record<string, any>
+    attacher: Record<string, any>,
+    parent: undefined | FormSchemeInputFull,
+    index: number
   ) => {
     const { handleBlur } = props;
     const {
@@ -94,7 +49,42 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       component,
       extra: { min, max, step, selectItems, radioItems, row },
       key,
+      placeholder,
+      controlled,
+      onKeyPress,
     } = input;
+    const value =
+      parent && parent.extra.useArray ? attacher[index] : attacher[name];
+    let generated_props = null;
+    const onChange = (e: BaseSyntheticEvent) => {
+      const { setValues, customHandler, setFieldTouched } = props;
+      if (e.persist) e.persist();
+      attacher[parent && parent.extra.useArray ? index : e.target.name] =
+        e.target.value || e.target.checked;
+      setValues({ ...values });
+      if (fieldHandler) fieldHandler(e.target.value);
+      if (customHandler) customHandler(values, setValues, e);
+      setFieldTouched(e.target.name, true, false);
+    };
+
+    if (controlled)
+      generated_props = {
+        name,
+        value: attacher[name],
+        onChange,
+        onBlur: handleBlur,
+        label,
+        placeholder,
+        disabled,
+      };
+    else
+      generated_props = {
+        name,
+        onKeyPress,
+        onChange: fieldHandler,
+        label,
+      };
+
     if (type === 'component') return component;
     else if (type === 'select')
       return (
@@ -102,11 +92,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           {!disabled ? (
             <Fragment>
               <InputLabel id={name}>{label}</InputLabel>
-              <Select
-                name={name}
-                value={parent[name]}
-                onChange={change.bind(null, fieldHandler, parent)}
-              >
+              <Select name={name} value={value} onChange={onChange}>
                 {selectItems.map(({ value, label, icon }) => {
                   return (
                     <MenuItem
@@ -126,12 +112,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     else if (type === 'slider')
       <Slider
         key={key}
-        value={parent[name]}
+        value={value}
         min={min}
         max={max}
         step={step}
         ValueLabelComponent={ValueLabelComponent}
-        onChangeCommitted={change.bind(null, fieldHandler, parent)}
+        onChangeCommitted={onChange}
         name={name}
       />;
     else if (type === 'checkbox')
@@ -141,9 +127,9 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           control={
             <Checkbox
               color={'primary'}
-              checked={parent[name] === true ? true : false}
+              checked={value === true ? true : false}
               name={name}
-              onChange={change.bind(null, fieldHandler, parent)}
+              onChange={onChange}
               onBlur={handleBlur}
             />
           }
@@ -154,11 +140,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       return (
         <FormControl key={key}>
           <FormLabel component="legend">{label}</FormLabel>
-          <RadioGroup
-            row
-            {...formikProps(input, parent)}
-            defaultValue={defaultValue}
-          >
+          <RadioGroup row {...generated_props} defaultValue={defaultValue}>
             {radioItems.map(({ label, value }) => (
               <FormControlLabel
                 key={value}
@@ -177,7 +159,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           key={key}
           defaultValue={defaultValue}
           type={'number'}
-          {...formikProps(input, parent)}
+          {...generated_props}
           fullWidth
         />
       );
@@ -188,24 +170,21 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           type={'text'}
           multiline
           rows={row || 5}
-          {...formikProps(input, parent)}
+          {...generated_props}
           fullWidth
         />
       );
     else
       return (
-        <TextField
-          type={'text'}
-          {...formikProps(input, parent)}
-          fullWidth
-          key={key}
-        />
+        <TextField type={'text'} {...generated_props} fullWidth key={key} />
       );
   };
 
   const formComponentRenderer = (
     input: FormSchemeInputFull,
-    parent: Record<string, any>
+    attacher: Record<string, any>,
+    parent: undefined | FormSchemeInputFull,
+    index: number
   ) => {
     const {
       key,
@@ -236,21 +215,21 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             >
               <TreeItem nodeId="1" label={label}>
                 <FormGroup row={false}>
-                  {children.map(child =>
-                    formComponentRenderer(child, parent[name])
+                  {children.map((child, index) =>
+                    formComponentRenderer(child, attacher[name], input, index)
                   )}
                 </FormGroup>
               </TreeItem>
             </TreeView>
           ) : (
             <FormGroup row={true}>
-              {children.map(child =>
-                formComponentRenderer(child, parent[name])
+              {children.map((child, index) =>
+                formComponentRenderer(child, attacher[name], input, index)
               )}
             </FormGroup>
           )
         ) : (
-          renderFormComponent(input, parent)
+          renderFormComponent(input, attacher, parent, index)
         )}
       </div>
     );
@@ -277,7 +256,9 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       onSubmit={handleSubmit}
     >
       <div className={`form-content`}>
-        {inputs.map(input => formComponentRenderer(input, values))}
+        {inputs.map((input, index) =>
+          formComponentRenderer(input, values, undefined, index)
+        )}
         {children}
       </div>
       {formButtons ? (

@@ -42,7 +42,7 @@ export interface FormSchemeInputFull {
   name: string;
   controlled: boolean;
   onKeyPress: () => any;
-  fieldHandler: () => any;
+  fieldHandler: (value: any) => any;
   siblings: FormSchemeInputFull[];
   extra: {
     useObject: boolean;
@@ -75,7 +75,7 @@ export interface FormSchemeInputPartial {
   name: string;
   controlled?: boolean;
   onKeyPress?: () => any;
-  fieldHandler?: () => any;
+  fieldHandler?: (value: any) => any;
   siblings?: FormSchemeInputPartial[];
   extra?: {
     useObject?: boolean;
@@ -121,15 +121,15 @@ export interface FormSchemePropsPartial<Values> extends FormikConfig<Values> {
 export interface FormSchemePropsFull<Values> extends FormikConfig<Values> {
   inputs: FormSchemeInputsFull;
   customHandler:
-    | undefined
-    | ((
-        values: Record<string, any>,
-        setValues: (
-          values: Record<string, any>,
-          shouldValidate?: boolean | undefined
-        ) => void,
-        e: BaseSyntheticEvent
-      ) => any);
+  | undefined
+  | ((
+    values: Record<string, any>,
+    setValues: (
+      values: Record<string, any>,
+      shouldValidate?: boolean | undefined
+    ) => void,
+    e: BaseSyntheticEvent
+  ) => any);
   formButtons: boolean;
   classNames: undefined | string;
   errorBeforeTouched: boolean;
@@ -142,7 +142,7 @@ export interface FormSchemePropsFull<Values> extends FormikConfig<Values> {
 
 export interface FormPropsPartial<Values>
   extends FormSchemePropsPartial<Values>,
-    FormikProps<Values> {
+  FormikProps<Values> {
   initialValues: Values;
   initialStatus?: any;
   initialErrors: FormikErrors<Values>;
@@ -151,7 +151,7 @@ export interface FormPropsPartial<Values>
 
 export interface FormPropsFull<Values>
   extends FormSchemePropsFull<Values>,
-    FormikProps<Values> {
+  FormikProps<Values> {
   initialValues: Values;
   initialStatus?: any;
   initialErrors: FormikErrors<Values>;
