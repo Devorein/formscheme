@@ -8,3 +8,4 @@ feature.md
 package.lock.json
 .DS_Store
 .cache
+/src/utils/copy.js

@@ -1,7 +1,15 @@
-import { FormSchemeInputFull, FormSchemeInputPartial, FormSchemePropsPartial, FormSchemePropsFull } from '../types';
+import {
+  FormSchemeInputFull,
+  FormSchemeInputPartial,
+  FormSchemePropsPartial,
+  FormSchemePropsFull,
+} from '../types';
 
-export function generateFormSchemeInputDefaultConfigs(input: FormSchemeInputPartial, index: number | undefined) {
-  if (!input.name) throw new Error("Input name is required")
+export function generateFormSchemeInputDefaultConfigs(
+  input: FormSchemeInputPartial,
+  index: number | undefined
+) {
+  if (!input.name) throw new Error('Input name is required');
   if (!input.disabled) input.disabled = false;
   if (!input.className) input.className = undefined;
   if (!input.placeholder) input.placeholder = undefined;
@@ -10,8 +18,12 @@ export function generateFormSchemeInputDefaultConfigs(input: FormSchemeInputPart
   if (!input.defaultValue) input.defaultValue = undefined;
   if (!input.type) input.type = 'text';
   if (!input.controlled) input.controlled = true;
-  if (!input.label) input.label = input.name.split("_").map((c: string) => c.charAt(0).toUpperCase() + c.substr(1)).join(" ");
-  if (!input.siblings) input.siblings = []
+  if (!input.label)
+    input.label = input.name
+      .split('_')
+      .map((c: string) => c.charAt(0).toUpperCase() + c.substr(1))
+      .join(' ');
+  if (!input.siblings) input.siblings = [];
   if (!input.onKeyPress) input.onKeyPress = undefined;
   if (!input.fieldHandler) input.fieldHandler = undefined;
   if (!input.extra) input.extra = {};
@@ -32,7 +44,9 @@ export function generateFormSchemeInputDefaultConfigs(input: FormSchemeInputPart
   return input as FormSchemeInputFull;
 }
 
-export function generateFormSchemePropsDefaultConfigs(props: FormSchemePropsPartial<Record<string, any>>) {
+export function generateFormSchemePropsDefaultConfigs(
+  props: FormSchemePropsPartial<Record<string, any>>
+) {
   const res: any = {};
   res.inputs = props.inputs;
   if (!props.customHandler) res.customHandler = undefined;

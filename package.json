@@ -6,11 +6,12 @@
   "typings": "dist/index.d.ts",
   "description": "Functional react form components from JSON Schema",
   "scripts": {
-    "start": "tsdx watch --entry ./src/FormScheme.tsx",
+    "start": "tsdx watch --entry ./src/FormScheme.tsx --onSuccess \"npm run post_start\"",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint src --fix",
-    "prepare": "tsdx build"
+    "prepare": "tsdx build",
+    "post_start": "node ./src/utils/copy"
   },
   "keywords": [],
   "author": "Devon Reid <devorein00@gmail.com>",
