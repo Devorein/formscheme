@@ -32,7 +32,7 @@ function ValueLabelComponent(props: any) {
 }
 
 function Form(props: FormPropsFull<Record<string, any>>) {
-  const renderFormComponent = (
+  const renderFormGroupItem = (
     input: FormSchemeInputFull,
     attacher: Record<string, any>,
     parent: undefined | FormSchemeInputFull,
@@ -60,7 +60,9 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       const { setValues, customHandler, setFieldTouched } = props;
       if (e.persist) e.persist();
       attacher[parent && parent.extra.useArray ? index : e.target.name] =
-        e.target.value || e.target.checked;
+        typeof e.target.value !== 'undefined'
+          ? e.target.value
+          : e.target.checked;
       setValues({ ...values });
       if (fieldHandler) fieldHandler(e.target.value);
       if (customHandler) customHandler(values, setValues, e);
@@ -180,7 +182,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       );
   };
 
-  const formComponentRenderer = (
+  const renderFormGroup = (
     input: FormSchemeInputFull,
     attacher: Record<string, any>,
     parent: undefined | FormSchemeInputFull,
@@ -216,7 +218,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
               <TreeItem nodeId="1" label={label}>
                 <FormGroup row={false}>
                   {children.map((child, index) =>
-                    formComponentRenderer(child, attacher[name], input, index)
+                    renderFormGroup(child, attacher[name], input, index)
                   )}
                 </FormGroup>
               </TreeItem>
@@ -224,12 +226,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           ) : (
             <FormGroup row={true}>
               {children.map((child, index) =>
-                formComponentRenderer(child, attacher[name], input, index)
+                renderFormGroup(child, attacher[name], input, index)
               )}
             </FormGroup>
           )
         ) : (
-          renderFormComponent(input, attacher, parent, index)
+          renderFormGroupItem(input, attacher, parent, index)
         )}
       </div>
     );
@@ -257,7 +259,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     >
       <div className={`form-content`}>
         {inputs.map((input, index) =>
-          formComponentRenderer(input, values, undefined, index)
+          renderFormGroup(input, values, undefined, index)
         )}
         {children}
       </div>
