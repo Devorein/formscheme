@@ -24,7 +24,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
 
     function inner(
       input: FormSchemeInputPartial,
-      parents: Record<string, any>,
+      parent: Record<string, any>,
       index: number
     ) {
       const GeneratedFormSchemeInputConfigs = generateFormSchemeInputDefaultConfigs(
@@ -53,13 +53,21 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
           )
         );
       } else {
-        parents.values[name] = defaultValue || '';
+        if (Array.isArray(parent.values))
+          parent.values.push(defaultValue || '');
+        else parent.values[name] = defaultValue || '';
         try {
-          validationSchema.validateSyncAt(defaultValue, parents.values[name], {
-            abortEarly: true,
-          });
+          validationSchema.validateSyncAt(
+            defaultValue,
+            Array.isArray(parent.values)
+              ? parent.values[index]
+              : parent.values[name],
+            {
+              abortEarly: true,
+            }
+          );
         } catch (err) {
-          parents.errors[name] = err.message;
+          parent.errors[name] = err.message;
         }
       }
     }
@@ -77,8 +85,9 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     validationSchema
   );
 
+  console.log(props.inputs);
+
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
-  console.log(GeneratedFormSchemeProps);
   const {
     onSubmit,
     validateOnMount,

@@ -11,10 +11,12 @@ function setObjectValues(
   against?: any
 ) {
   arr.forEach(entry => {
+    against = against || parent;
+    const should_add = against ? typeof against[entry[0]] === "undefined" : typeof parent[entry[0]] === "undefined";
     if (Array.isArray(entry)) {
-      if (against ? !against[entry[0]] : !parent[entry[0]])
+      if (should_add)
         parent[entry[0]] = entry[1];
-    } else if (against ? !against[entry] : !parent[entry])
+    } else if (should_add)
       parent[entry] = undefined;
   });
 }
@@ -29,13 +31,15 @@ export function generateFormSchemeInputDefaultConfigs(
     if (!input.children || input.children.length === 0)
       throw new Error('Grouped FormScheme must have children components');
     setObjectValues(input.extra, [
+      ['useArray', false],
+      ['useObject', input.extra.useArray ? false : true],
       ['treeView', true],
       ['collapse', false],
       ['append', true],
     ]);
   } else {
     input.children = [];
-    setObjectValues(input.extra, ['treeView', 'collapse', 'append']);
+    setObjectValues(input.extra, ['treeView', 'collapse', 'append', 'useArray', 'useObject']);
   }
 
   if (!input.name) throw new Error('Input name is required');
@@ -60,8 +64,6 @@ export function generateFormSchemeInputDefaultConfigs(
       .join(' ');
 
   setObjectValues(input.extra, [
-    ['useObject', true],
-    ['useArray', false],
     ['selectItems', []],
     ['radioItems', []],
     'row',
