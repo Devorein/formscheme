@@ -87,49 +87,41 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       label,
       defaultValue,
       type = 'text',
-      helperText,
       disabled,
-      siblings,
       fieldHandler,
       component,
       extra: { min, max, step, selectItems, radioItems, row },
       key,
     } = input;
     if (type === 'component') return component;
-    else if (type === 'select') {
+    else if (type === 'select')
       return (
-        <Fragment key={name}>
-          <FormControl disabled={disabled ? disabled : false} fullWidth>
-            {!disabled ? (
-              <Fragment>
-                <InputLabel id={name}>{label}</InputLabel>
-                <Select
-                  name={name}
-                  value={values[name]}
-                  onChange={change.bind(null, fieldHandler)}
-                >
-                  {selectItems.map(({ value, label, icon }) => {
-                    return (
-                      <MenuItem
-                        key={value ? value : label}
-                        value={value ? value : label}
-                      >
-                        {icon ? <Icon>{icon}</Icon> : null}
-                        {label}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </Fragment>
-            ) : null}
-            {helperText ? <FormHelperText>{helperText}</FormHelperText> : null}
-          </FormControl>
-          {siblings
-            ? siblings.map(sibling => formComponentRenderer(sibling))
-            : null}
-        </Fragment>
+        <FormControl key={key} disabled={disabled ? disabled : false} fullWidth>
+          {!disabled ? (
+            <Fragment>
+              <InputLabel id={name}>{label}</InputLabel>
+              <Select
+                name={name}
+                value={values[name]}
+                onChange={change.bind(null, fieldHandler)}
+              >
+                {selectItems.map(({ value, label, icon }) => {
+                  return (
+                    <MenuItem
+                      key={value ? value : label}
+                      value={value ? value : label}
+                    >
+                      {icon ? <Icon>{icon}</Icon> : null}
+                      {label}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </Fragment>
+          ) : null}
+        </FormControl>
       );
-    } else if (type === 'slider') {
+    else if (type === 'slider')
       <Slider
         key={key}
         value={values[name]}
@@ -140,90 +132,68 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         onChangeCommitted={change.bind(null, fieldHandler)}
         name={name}
       />;
-    } else if (type === 'checkbox') {
+    else if (type === 'checkbox')
       return (
-        <Fragment key={name}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                color={'primary'}
-                checked={values[name] === true ? true : false}
-                name={name}
-                onChange={change.bind(null, fieldHandler)}
-                onBlur={handleBlur}
-                // error={touched[name] && errors[name]}
-              />
-            }
-            label={label}
-          />
-          {siblings
-            ? siblings.map(sibling => formComponentRenderer(sibling))
-            : null}
-        </Fragment>
+        <FormControlLabel
+          key={key}
+          control={
+            <Checkbox
+              color={'primary'}
+              checked={values[name] === true ? true : false}
+              name={name}
+              onChange={change.bind(null, fieldHandler)}
+              onBlur={handleBlur}
+              // error={touched[name] && errors[name]}
+            />
+          }
+          label={label}
+        />
       );
-    } else if (type === 'radio') {
+    else if (type === 'radio') {
       const props = formikProps(input);
       delete props.helperText;
       delete props.error;
       return (
-        <Fragment key={name}>
-          <FormControl>
-            <FormLabel component="legend">{label}</FormLabel>
-            <RadioGroup row {...props} defaultValue={defaultValue}>
-              {radioItems.map(({ label, value }) => (
-                <FormControlLabel
-                  key={value}
-                  control={<Radio color="primary" />}
-                  value={value}
-                  label={label}
-                  labelPlacement="end"
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-          {siblings
-            ? siblings.map(sibling => formComponentRenderer(sibling))
-            : null}
-        </Fragment>
+        <FormControl key={key}>
+          <FormLabel component="legend">{label}</FormLabel>
+          <RadioGroup row {...props} defaultValue={defaultValue}>
+            {radioItems.map(({ label, value }) => (
+              <FormControlLabel
+                key={value}
+                control={<Radio color="primary" />}
+                value={value}
+                label={label}
+                labelPlacement="end"
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
       );
     } else if (type === 'number')
       return (
-        <Fragment key={name}>
-          <TextField
-            defaultValue={defaultValue}
-            type={'number'}
-            {...formikProps(input)}
-            fullWidth
-            // inputProps={{ ...inputProps }}
-          />
-          {siblings
-            ? siblings.map(sibling => formComponentRenderer(sibling))
-            : null}
-        </Fragment>
+        <TextField
+          key={key}
+          defaultValue={defaultValue}
+          type={'number'}
+          {...formikProps(input)}
+          fullWidth
+          // inputProps={{ ...inputProps }}
+        />
       );
     else if (type === 'textarea')
       return (
-        <Fragment key={name}>
-          <TextField
-            type={'text'}
-            multiline
-            rows={row || 5}
-            {...formikProps(input)}
-            fullWidth
-          />
-          {siblings
-            ? siblings.map(sibling => formComponentRenderer(sibling))
-            : null}
-        </Fragment>
+        <TextField
+          key={key}
+          type={'text'}
+          multiline
+          rows={row || 5}
+          {...formikProps(input)}
+          fullWidth
+        />
       );
     else
       return (
-        <Fragment key={name}>
-          <TextField type={'text'} {...formikProps(input)} fullWidth />
-          {siblings
-            ? siblings.map(sibling => formComponentRenderer(sibling))
-            : null}
-        </Fragment>
+        <TextField type={'text'} {...formikProps(input)} fullWidth key={key} />
       );
   };
 
@@ -239,7 +209,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       extra,
     } = input;
     return (
-      <div className={className}>
+      <div className={className} key={key}>
         <div>{label}</div>
         {helperText !== '' ? (
           <FormHelperText>{helperText}</FormHelperText>
@@ -250,7 +220,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         {type === 'group' ? (
           extra.treeView ? (
             <TreeView
-              key={key}
               defaultCollapseIcon={<ExpandMoreIcon />}
               defaultExpandIcon={<ChevronRightIcon />}
               defaultExpanded={[extra.collapse ? '0' : '1']}
@@ -262,7 +231,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
               </TreeItem>
             </TreeView>
           ) : (
-            <FormGroup row={true} key={key}>
+            <FormGroup row={true}>
               {children.map(child => renderFormComponent(child))}
             </FormGroup>
           )

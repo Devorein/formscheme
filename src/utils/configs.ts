@@ -12,18 +12,19 @@ function setObjectValues(
 ) {
   arr.forEach(entry => {
     against = against || parent;
-    const should_add = against ? typeof against[entry[0]] === "undefined" : typeof parent[entry[0]] === "undefined";
+    const should_add = against
+      ? typeof against[entry[0]] === 'undefined'
+      : typeof parent[entry[0]] === 'undefined';
     if (Array.isArray(entry)) {
-      if (should_add)
-        parent[entry[0]] = entry[1];
-    } else if (should_add)
-      parent[entry] = undefined;
+      if (should_add) parent[entry[0]] = entry[1];
+    } else if (should_add) parent[entry] = undefined;
   });
 }
 
 export function generateFormSchemeInputDefaultConfigs(
   input: FormSchemeInputPartial,
-  index: number | undefined
+  parents: FormSchemeInputFull[] = [],
+  index: number | undefined = 0
 ) {
   if (!input.extra) input.extra = {};
 
@@ -39,7 +40,13 @@ export function generateFormSchemeInputDefaultConfigs(
     ]);
   } else {
     input.children = [];
-    setObjectValues(input.extra, ['treeView', 'collapse', 'append', 'useArray', 'useObject']);
+    setObjectValues(input.extra, [
+      'treeView',
+      'collapse',
+      'append',
+      'useArray',
+      'useObject',
+    ]);
   }
 
   if (!input.name) throw new Error('Input name is required');
@@ -72,8 +79,8 @@ export function generateFormSchemeInputDefaultConfigs(
     'step',
     'component',
   ]);
-
-  if (!input.key) input.key = index ? input.name + index : input.name;
+  const full_path = parents.reduce((acc, parent) => acc.concat(parent.name), [] as any[]).join(".");
+  if (!input.key) input.key = (full_path || "") + input.name + index;
 
   if (input.type === 'radio' && (input?.extra?.radioItems ?? [])?.length === 0)
     throw new Error('Radio component must have radio items');

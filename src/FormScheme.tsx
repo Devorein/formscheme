@@ -7,6 +7,7 @@ import Form from './Form';
 import {
   FormSchemePropsPartial,
   FormSchemeInputPartial,
+  FormSchemeInputFull,
   // FormSchemeInputFull,
 } from './types';
 import {
@@ -24,11 +25,13 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
 
     function inner(
       input: FormSchemeInputPartial,
-      parent: Record<string, any>,
+      attacher: Record<string, any>,
+      parents: FormSchemeInputFull[] = [],
       index: number
     ) {
       const GeneratedFormSchemeInputConfigs = generateFormSchemeInputDefaultConfigs(
         input,
+        parents,
         index
       );
       const {
@@ -49,31 +52,32 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
             extra.append
               ? { values: initialValues[name], errors: initialErrors[name] }
               : { values: initialValues, errors: initialErrors },
+            [...parents, GeneratedFormSchemeInputConfigs],
             index
           )
         );
       } else {
-        if (Array.isArray(parent.values))
-          parent.values.push(defaultValue || '');
-        else parent.values[name] = defaultValue || '';
+        if (Array.isArray(attacher.values))
+          attacher.values.push(defaultValue || '');
+        else attacher.values[name] = defaultValue || '';
         try {
           validationSchema.validateSyncAt(
             defaultValue,
-            Array.isArray(parent.values)
-              ? parent.values[index]
-              : parent.values[name],
+            Array.isArray(attacher.values)
+              ? attacher.values[index]
+              : attacher.values[name],
             {
               abortEarly: true,
             }
           );
         } catch (err) {
-          parent.errors[name] = err.message;
+          attacher.errors[name] = err.message;
         }
       }
     }
     inputs.forEach(input =>
       input
-        ? inner(input, { values: initialValues, errors: initialErrors }, 0)
+        ? inner(input, { values: initialValues, errors: initialErrors }, [], 0)
         : void 0
     );
 
@@ -84,8 +88,6 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   const { initialValues, initialErrors } = populateInitialValue(
     validationSchema
   );
-
-  console.log(props.inputs);
 
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
   const {
