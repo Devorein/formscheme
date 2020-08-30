@@ -26,7 +26,7 @@ export interface FormSchemeInputFull {
   label: undefined | string,
   name: string,
   controlled: boolean,
-  onkeyPress: () => any,
+  onKeyPress: () => any,
   fieldHandler: () => any,
   siblings: FormSchemeInputFull[]
   extra: {
@@ -58,7 +58,7 @@ export interface FormSchemeInputPartial {
   label: undefined | string,
   name: string,
   controlled?: boolean,
-  onkeyPress?: () => any,
+  onKeyPress?: () => any,
   fieldHandler?: () => any,
   siblings?: FormSchemeInputPartial[]
   extra?: {

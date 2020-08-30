@@ -70,7 +70,6 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   );
 
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
-  console.log(GeneratedFormSchemeProps);
 
   const {
     onSubmit,
@@ -98,7 +97,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
             {typeof children === 'function'
               ? children({
                   ...props,
-                  inputs: passFormAsProp ? FORM : null,
+                  FORM: passFormAsProp ? FORM : null,
                 })
               : children}
           </Fragment>

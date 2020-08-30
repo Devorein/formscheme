@@ -61,7 +61,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       label,
       placeholder,
       controlled,
-      onkeyPress,
+      onKeyPress,
       fieldHandler,
     } = input;
     if (controlled)
@@ -85,7 +85,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     else
       return {
         name,
-        onkeyPress,
+        onKeyPress,
         onChange: fieldHandler,
         label: decideLabel(name, label),
       };

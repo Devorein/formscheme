@@ -9,10 +9,10 @@ export function generateFormSchemeInputDefaultConfigs(input: FormSchemeInputPart
   if (!input.errorText) input.errorText = undefined;
   if (!input.defaultValue) input.defaultValue = undefined;
   if (!input.type) input.type = 'text';
-  if (!input.controlled) input.controlled = false;
+  if (!input.controlled) input.controlled = true;
   if (!input.label) input.label = input.name.split("_").map((c: string) => c.charAt(0).toUpperCase() + c.substr(1)).join(" ");
   if (!input.siblings) input.siblings = []
-  if (!input.onkeyPress) input.onkeyPress = undefined;
+  if (!input.onKeyPress) input.onKeyPress = undefined;
   if (!input.fieldHandler) input.fieldHandler = undefined;
   if (!input.extra) input.extra = {};
   if (!input.extra.append) input.extra.append = true;
