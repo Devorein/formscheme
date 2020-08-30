@@ -32,18 +32,25 @@ function ValueLabelComponent(props: any) {
 }
 
 function Form(props: FormPropsFull<Record<string, any>>) {
-  const change = (fieldHandler: (arg: any) => any, e: BaseSyntheticEvent) => {
-    const { values, setValues, customHandler, setFieldTouched } = props;
+  const change = (
+    fieldHandler: (arg: any) => any,
+    parent: Record<string, any>,
+    e: BaseSyntheticEvent
+  ) => {
+    const { setValues, customHandler, setFieldTouched } = props;
     if (e.persist) e.persist();
-    values[(e.target as any).name] = e.target.value || e.target.checked;
+    parent[e.target.name] = e.target.value || e.target.checked;
     setValues({ ...values });
-    if (fieldHandler) fieldHandler((e.target as any).value);
+    if (fieldHandler) fieldHandler(e.target.value);
     if (customHandler) customHandler(values, setValues, e);
     setFieldTouched(e.target.name, true, false);
   };
 
-  const formikProps = (input: FormSchemeInputFull) => {
-    const { values, handleBlur, touched, errors, errorBeforeTouched } = props;
+  const formikProps = (
+    input: FormSchemeInputFull,
+    parent: Record<string, any>
+  ) => {
+    const { handleBlur } = props;
     const {
       disabled,
       name,
@@ -56,17 +63,9 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     if (controlled)
       return {
         name,
-        value: typeof values[name] === 'undefined' ? '' : values[name],
-        onChange: change.bind(null, fieldHandler),
+        value: parent[name],
+        onChange: change.bind(null, fieldHandler, parent),
         onBlur: handleBlur,
-        error: errorBeforeTouched
-          ? Boolean(errors[name])
-          : touched[name] && Boolean(errors[name]),
-        helperText: errorBeforeTouched
-          ? errors[name]
-          : touched[name]
-          ? errors[name]
-          : '',
         label,
         placeholder,
         disabled,
@@ -80,8 +79,11 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       };
   };
 
-  const renderFormComponent = (input: FormSchemeInputFull) => {
-    const { values, handleBlur } = props;
+  const renderFormComponent = (
+    input: FormSchemeInputFull,
+    parent: Record<string, any>
+  ) => {
+    const { handleBlur } = props;
     const {
       name,
       label,
@@ -102,8 +104,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
               <InputLabel id={name}>{label}</InputLabel>
               <Select
                 name={name}
-                value={values[name]}
-                onChange={change.bind(null, fieldHandler)}
+                value={parent[name]}
+                onChange={change.bind(null, fieldHandler, parent)}
               >
                 {selectItems.map(({ value, label, icon }) => {
                   return (
@@ -124,12 +126,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     else if (type === 'slider')
       <Slider
         key={key}
-        value={values[name]}
+        value={parent[name]}
         min={min}
         max={max}
         step={step}
         ValueLabelComponent={ValueLabelComponent}
-        onChangeCommitted={change.bind(null, fieldHandler)}
+        onChangeCommitted={change.bind(null, fieldHandler, parent)}
         name={name}
       />;
     else if (type === 'checkbox')
@@ -139,24 +141,24 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           control={
             <Checkbox
               color={'primary'}
-              checked={values[name] === true ? true : false}
+              checked={parent[name] === true ? true : false}
               name={name}
-              onChange={change.bind(null, fieldHandler)}
+              onChange={change.bind(null, fieldHandler, parent)}
               onBlur={handleBlur}
-              // error={touched[name] && errors[name]}
             />
           }
           label={label}
         />
       );
-    else if (type === 'radio') {
-      const props = formikProps(input);
-      delete props.helperText;
-      delete props.error;
+    else if (type === 'radio')
       return (
         <FormControl key={key}>
           <FormLabel component="legend">{label}</FormLabel>
-          <RadioGroup row {...props} defaultValue={defaultValue}>
+          <RadioGroup
+            row
+            {...formikProps(input, parent)}
+            defaultValue={defaultValue}
+          >
             {radioItems.map(({ label, value }) => (
               <FormControlLabel
                 key={value}
@@ -169,15 +171,14 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           </RadioGroup>
         </FormControl>
       );
-    } else if (type === 'number')
+    else if (type === 'number')
       return (
         <TextField
           key={key}
           defaultValue={defaultValue}
           type={'number'}
-          {...formikProps(input)}
+          {...formikProps(input, parent)}
           fullWidth
-          // inputProps={{ ...inputProps }}
         />
       );
     else if (type === 'textarea')
@@ -187,17 +188,25 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           type={'text'}
           multiline
           rows={row || 5}
-          {...formikProps(input)}
+          {...formikProps(input, parent)}
           fullWidth
         />
       );
     else
       return (
-        <TextField type={'text'} {...formikProps(input)} fullWidth key={key} />
+        <TextField
+          type={'text'}
+          {...formikProps(input, parent)}
+          fullWidth
+          key={key}
+        />
       );
   };
 
-  const formComponentRenderer = (input: FormSchemeInputFull) => {
+  const formComponentRenderer = (
+    input: FormSchemeInputFull,
+    parent: Record<string, any>
+  ) => {
     const {
       key,
       children,
@@ -207,6 +216,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       className,
       label,
       extra,
+      name,
     } = input;
     return (
       <div className={className} key={key}>
@@ -226,17 +236,21 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             >
               <TreeItem nodeId="1" label={label}>
                 <FormGroup row={false}>
-                  {children.map(child => renderFormComponent(child))}
+                  {children.map(child =>
+                    formComponentRenderer(child, parent[name])
+                  )}
                 </FormGroup>
               </TreeItem>
             </TreeView>
           ) : (
             <FormGroup row={true}>
-              {children.map(child => renderFormComponent(child))}
+              {children.map(child =>
+                formComponentRenderer(child, parent[name])
+              )}
             </FormGroup>
           )
         ) : (
-          renderFormComponent(input)
+          renderFormComponent(input, parent)
         )}
       </div>
     );
@@ -254,6 +268,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     formButtons = true,
     classNames,
     disabled,
+    values,
   } = props;
 
   return (
@@ -262,7 +277,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       onSubmit={handleSubmit}
     >
       <div className={`form-content`}>
-        {inputs.map(input => formComponentRenderer(input))}
+        {inputs.map(input => formComponentRenderer(input, values))}
         {children}
       </div>
       {formButtons ? (

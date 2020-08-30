@@ -79,8 +79,10 @@ export function generateFormSchemeInputDefaultConfigs(
     'step',
     'component',
   ]);
-  const full_path = parents.reduce((acc, parent) => acc.concat(parent.name), [] as any[]).join(".");
-  if (!input.key) input.key = (full_path || "") + input.name + index;
+  const full_path = parents
+    .reduce((acc, parent) => acc.concat(parent.name), [] as any[])
+    .join('.');
+  if (!input.key) input.key = (full_path || '') + input.name + index;
 
   if (input.type === 'radio' && (input?.extra?.radioItems ?? [])?.length === 0)
     throw new Error('Radio component must have radio items');
