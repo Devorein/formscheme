@@ -14,10 +14,10 @@ export interface RadioItems {
   label: string,
 }
 
-export interface FormSchemeInput {
+export interface FormSchemeInputFull {
   disabled: boolean,
   className: string | undefined,
-  children: null | FormSchemeInputs,
+  children: undefined | FormSchemeInputsFull,
   placeholder: string,
   type: FormElementType,
   helperText: undefined | string,
@@ -28,7 +28,7 @@ export interface FormSchemeInput {
   controlled: boolean,
   onkeyPress: () => any,
   fieldHandler: () => any,
-  siblings: FormSchemeInput[]
+  siblings: FormSchemeInputFull[]
   extra: {
     append: boolean,
     useArray: boolean,
@@ -46,22 +46,75 @@ export interface FormSchemeInput {
   component: JSX.Element
 }
 
-export type FormSchemeInputs = FormSchemeInput[];
+export interface FormSchemeInputPartial {
+  disabled?: boolean,
+  className?: string,
+  children?: FormSchemeInputsPartial,
+  placeholder?: string,
+  type?: FormElementType,
+  helperText?: undefined | string,
+  errorText?: undefined | string,
+  defaultValue?: string,
+  label: undefined | string,
+  name: string,
+  controlled?: boolean,
+  onkeyPress?: () => any,
+  fieldHandler?: () => any,
+  siblings?: FormSchemeInputPartial[]
+  extra?: {
+    append?: boolean,
+    useArray?: boolean,
+    selectItems?: SelectItems[],
+    radioItems?: RadioItems[],
+    row?: number,
+    groupType?: GroupType,
+    treeView?: boolean,
+    collapse?: boolean,
+    min?: number,
+    max?: number,
+    step?: number
+  },
+  key?: string,
+  component?: JSX.Element
+}
 
-export interface InputFormProps<Values> extends FormikConfig<Values> {
-  inputs: FormSchemeInputs,
-  customHandler: (values: Record<string, any>, setValues: (values: Record<string, any>, shouldValidate?: boolean | undefined) => void, e: BaseSyntheticEvent) => any,
+export type FormSchemeInputsPartial = FormSchemeInputPartial[];
+export type FormSchemeInputsFull = FormSchemeInputFull[];
+
+export interface FormSchemePropsPartial<Values> extends FormikConfig<Values> {
+  inputs: FormSchemeInputsPartial,
+  customHandler?: (values: Record<string, any>, setValues: (values: Record<string, any>, shouldValidate?: boolean | undefined) => void, e: BaseSyntheticEvent) => any,
+  formButtons?: boolean,
+  classNames?: string,
+  errorBeforeTouched?: boolean,
+  submitMsg?: string,
+  resetMsg?: string,
+  children?: ReactNode | ((props: any) => ReactElement<any> | null),
+  passFormAsProp?: boolean,
+  disabled?: boolean,
+}
+
+export interface FormSchemePropsFull<Values> extends FormikConfig<Values> {
+  inputs: FormSchemeInputsFull,
+  customHandler: undefined | ((values: Record<string, any>, setValues: (values: Record<string, any>, shouldValidate?: boolean | undefined) => void, e: BaseSyntheticEvent) => any),
   formButtons: boolean,
-  classNames: string | string[],
+  classNames: undefined | string,
   errorBeforeTouched: boolean,
-  submitMsg: string | undefined,
-  resetMsg: string | undefined,
-  children: ReactNode | ((props: any) => ReactElement<any> | null),
+  submitMsg: string,
+  resetMsg: string,
+  children: undefined | ReactNode | ((props: any) => ReactElement<any> | null),
   passFormAsProp: boolean,
   disabled: boolean,
 }
 
-export interface FormProps<Values> extends InputFormProps<Values>, FormikProps<Values> {
+export interface FormPropsPartial<Values> extends FormSchemePropsPartial<Values>, FormikProps<Values> {
+  initialValues: Values,
+  initialStatus?: any;
+  initialErrors: FormikErrors<Values>;
+  initialTouched: FormikTouched<Values>;
+}
+
+export interface FormPropsFull<Values> extends FormSchemePropsFull<Values>, FormikProps<Values> {
   initialValues: Values,
   initialStatus?: any;
   initialErrors: FormikErrors<Values>;

@@ -1,32 +1,53 @@
 import React, { Fragment } from 'react';
 import { Formik } from 'formik';
+import { ObjectSchema } from 'yup';
 
+import generateYupSchema from './Yupschema';
 import Form from './Form';
-import { InputFormProps, FormSchemeInput } from './types';
+import {
+  FormSchemePropsPartial,
+  FormSchemeInputPartial,
+  FormSchemeInputFull,
+} from './types';
+import {
+  generateFormSchemeInputDefaultConfigs,
+  generateFormSchemePropsDefaultConfigs,
+} from './utils/configs';
 
-function FormScheme(props: InputFormProps<Record<string, any>>) {
-  const populateInitialValue = () => {
-    const { validationSchema, inputs } = props;
+function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
+  const populateInitialValue = (
+    validationSchema: ObjectSchema<Record<string, any> | undefined>
+  ) => {
+    const { inputs } = props;
     const initialValues: Record<string, any> = {};
     const initialErrors: Record<string, any> = {};
 
     function inner(
-      input: FormSchemeInput,
-      parents: FormSchemeInput[] = [],
+      input: FormSchemeInputPartial,
+      parents: FormSchemeInputFull[] = [],
       index: number
     ) {
-      const parent = parents[parents.length - 1] || {};
-      const { extra } = parent;
-      if (input.type === 'group') {
-        if (input.children)
-          input.children.forEach((child, index) =>
-            inner(child, [...parents, input], index)
+      const GeneratedFormSchemeInputConfigs = generateFormSchemeInputDefaultConfigs(
+        input,
+        index
+      );
+      const {
+        type,
+        children,
+        name,
+        defaultValue,
+      } = GeneratedFormSchemeInputConfigs;
+      const parent = parents[parents.length - 1];
+      if (type === 'group') {
+        if (children)
+          children.forEach((child, index) =>
+            inner(child, [...parents, GeneratedFormSchemeInputConfigs], index)
           );
         else throw new Error('Grouped FormScheme must have childrens');
       } else {
-        const { name, defaultValue } = input;
-        const field_key = `${extra.append}` + (extra.useArray ? index : name);
-        input.name = field_key;
+        const field_key =
+          `${parent ? parent.extra.append : ''}` +
+          (parent ? parent.extra.useArray : name ? index : name);
         initialValues[field_key] =
           typeof defaultValue !== 'undefined' ? defaultValue : '';
         try {
@@ -42,16 +63,22 @@ function FormScheme(props: InputFormProps<Record<string, any>>) {
 
     return { initialValues, initialErrors };
   };
-  const {
-    validationSchema,
-    onSubmit,
-    validateOnMount = false,
-    children,
-    passFormAsProp = false,
-    initialTouched,
-  } = props;
 
-  const { initialValues, initialErrors } = populateInitialValue();
+  const validationSchema = generateYupSchema(props.inputs);
+  const { initialValues, initialErrors } = populateInitialValue(
+    validationSchema
+  );
+
+  const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
+  console.log(GeneratedFormSchemeProps);
+
+  const {
+    onSubmit,
+    validateOnMount,
+    children,
+    passFormAsProp,
+    initialTouched,
+  } = GeneratedFormSchemeProps;
 
   return (
     <Formik
@@ -64,7 +91,7 @@ function FormScheme(props: InputFormProps<Record<string, any>>) {
       initialErrors={initialErrors}
     >
       {formik_props => {
-        const FORM = <Form {...formik_props} {...props} />;
+        const FORM = <Form {...formik_props} {...GeneratedFormSchemeProps} />;
         return (
           <Fragment>
             {passFormAsProp ? null : FORM}

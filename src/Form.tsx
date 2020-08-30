@@ -20,7 +20,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 
-import { FormProps, FormSchemeInput } from './types';
+import { FormPropsFull, FormSchemeInputFull } from './types';
 
 function ValueLabelComponent(props: any) {
   const { children, open, value } = props;
@@ -31,7 +31,7 @@ function ValueLabelComponent(props: any) {
   );
 }
 
-function Form(props: FormProps<Record<string, any>>) {
+function Form(props: FormPropsFull<Record<string, any>>) {
   const decideLabel = (name: string, label: string | undefined) => {
     if (label) return label;
     else {
@@ -53,7 +53,7 @@ function Form(props: FormProps<Record<string, any>>) {
     setFieldTouched(e.target.name, true, false);
   };
 
-  const formikProps = (input: FormSchemeInput) => {
+  const formikProps = (input: FormSchemeInputFull) => {
     const { values, handleBlur, touched, errors, errorBeforeTouched } = props;
     const {
       disabled,
@@ -91,7 +91,7 @@ function Form(props: FormProps<Record<string, any>>) {
       };
   };
 
-  const renderFormComponent = (input: FormSchemeInput) => {
+  const renderFormComponent = (input: FormSchemeInputFull) => {
     const { values, handleBlur } = props;
     const {
       name,
@@ -241,7 +241,7 @@ function Form(props: FormProps<Record<string, any>>) {
       );
   };
 
-  const formComponentRenderer = (input: FormSchemeInput) => {
+  const formComponentRenderer = (input: FormSchemeInputFull) => {
     const {
       key,
       children,

@@ -6,7 +6,7 @@
   "typings": "dist/index.d.ts",
   "description": "Functional react form components from JSON Schema",
   "scripts": {
-    "start": "tsdx watch",
+    "start": "tsdx watch --entry ./src/FormScheme.tsx --format esm",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint src",
@@ -16,7 +16,8 @@
   "author": "Devon Reid <devorein00@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "formik": "^2.1.5"
+    "formik": "^2.1.5",
+    "yup": "^0.29.3"
   },
   "files": [
     "dist",
@@ -55,8 +56,11 @@
     "tsdx": "^0.13.3",
     "tslib": "^2.0.1",
     "typescript": "^4.0.2",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   },
   "peerDependencies": {
     "@material-ui/core": "^4.11.0",
