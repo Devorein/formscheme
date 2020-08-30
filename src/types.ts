@@ -45,7 +45,7 @@ export interface FormSchemeInputFull {
   fieldHandler: () => any;
   siblings: FormSchemeInputFull[];
   extra: {
-    append: boolean;
+    useObject: boolean;
     useArray: boolean;
     selectItems: SelectItems[];
     radioItems: RadioItems[];
@@ -77,7 +77,7 @@ export interface FormSchemeInputPartial {
   fieldHandler?: () => any;
   siblings?: FormSchemeInputPartial[];
   extra?: {
-    append?: boolean;
+    useObject?: boolean;
     useArray?: boolean;
     selectItems?: SelectItems[];
     radioItems?: RadioItems[];

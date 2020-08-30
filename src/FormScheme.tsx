@@ -44,7 +44,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
       else {
         const parent = parents[parents.length - 1];
         const field_key =
-          `${parent?.extra?.append || ''}` +
+          `${parent?.extra?.useObject || ''}` +
           (parent?.extra?.useArray ? index : name);
         initialValues[field_key] = defaultValue || '';
         try {
@@ -67,7 +67,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   );
 
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
-
+  console.log(GeneratedFormSchemeProps);
   const {
     onSubmit,
     validateOnMount,
