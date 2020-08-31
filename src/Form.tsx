@@ -45,15 +45,16 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       disabled,
       fieldHandler,
       component,
-      extra: { min, max, step, selectItems, radioItems, row },
+      input_props,
+      selectItems,
+      radioItems,
       key,
       placeholder,
       controlled,
       onKeyPress,
       className,
     } = input;
-    const value =
-      parent && parent.extra.useArray ? attacher[index] : attacher[name];
+    const value = parent && parent.useArray ? attacher[index] : attacher[name];
     let generated_props = null;
 
     const {
@@ -63,7 +64,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
 
     const onChange = (e: BaseSyntheticEvent) => {
       if (e.persist) e.persist();
-      attacher[parent && parent.extra.useArray ? index : e.target.name] =
+      attacher[parent && parent.useArray ? index : e.target.name] =
         type !== 'checkbox' ? e.target.value : e.target.checked;
       setValues({ ...values });
       if (fieldHandler) fieldHandler(e.target.value);
@@ -88,7 +89,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         onChange: fieldHandler,
         label,
       };
-
     if (type === 'component') return component;
     else if (type === 'select')
       return (
@@ -99,6 +99,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           className={
             className || 'FormScheme-content-container-component-select'
           }
+          {...input_props}
         >
           {selectItems.map(({ value, label, icon }, index) => {
             return (
@@ -114,18 +115,16 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       return (
         <Slider
           value={value}
-          min={min}
-          max={max}
-          step={step}
           ValueLabelComponent={ValueLabelComponent}
           onChangeCommitted={(_, value) => {
-            attacher[parent && parent.extra.useArray ? index : name] = value;
+            attacher[parent && parent.useArray ? index : name] = value;
             setValues({ ...values });
           }}
           name={name}
           className={
             className || 'FormScheme-content-container-component-slider'
           }
+          {...input_props}
         />
       );
     else if (type === 'checkbox')
@@ -139,6 +138,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           name={name}
           onChange={onChange}
           onBlur={handleBlur}
+          {...input_props}
         />
       );
     else if (type === 'radio')
@@ -149,6 +149,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           className={
             className || 'FormScheme-content-container-component-radio'
           }
+          {...input_props}
         >
           {radioItems.map(({ label, value }, index) => (
             <FormControlLabel
@@ -165,16 +166,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       return (
         <TextField
           type={'number'}
-          inputProps={{
-            min,
-            max,
-            step,
-          }}
           {...generated_props}
           fullWidth
           className={
             className || 'FormScheme-content-container-component-number'
           }
+          {...input_props}
         />
       );
     else if (type === 'textarea')
@@ -182,12 +179,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         <TextField
           type={'text'}
           multiline
-          rows={row}
           {...generated_props}
           fullWidth
           className={
             className || 'FormScheme-content-container-component-textarea'
           }
+          {...input_props}
         />
       );
     else
@@ -197,6 +194,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           {...generated_props}
           fullWidth
           className={className || 'FormScheme-content-container-component-text'}
+          {...input_props}
         />
       );
   };
@@ -215,9 +213,10 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       errorText,
       className,
       label,
-      extra,
       name,
       disabled,
+      treeView,
+      collapse,
     } = input;
     return (
       <FormControl
@@ -241,11 +240,11 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           </FormHelperText>
         )}
         {type === 'group' ? (
-          extra.treeView ? (
+          treeView ? (
             <TreeView
               defaultCollapseIcon={<ExpandMoreIcon />}
               defaultExpandIcon={<ChevronRightIcon />}
-              defaultExpanded={[extra.collapse ? '0' : '1']}
+              defaultExpanded={[collapse ? '0' : '1']}
               onNodeToggle={e => {
                 const parent = (e.target as any).parentElement;
                 parent.lastElementChild.textContent = !parent.nextElementSibling
@@ -253,10 +252,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                   : 'Expand';
               }}
             >
-              <TreeItem
-                nodeId="1"
-                label={extra.collapse ? 'Expand' : 'Collapse'}
-              >
+              <TreeItem nodeId="1" label={collapse ? 'Expand' : 'Collapse'}>
                 <FormGroup row={false}>
                   {children.map((child, index) =>
                     renderFormGroup(child, attacher[name], input, index)

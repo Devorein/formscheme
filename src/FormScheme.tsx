@@ -40,17 +40,18 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         name,
         touched,
         defaultValue,
-        extra,
+        useArray,
+        useObject,
+        append,
       } = GeneratedFormSchemeInputConfigs;
 
       if (type === 'group') {
-        if (extra.useObject) types.forEach(type => (attacher[type][name] = {}));
-        else if (extra.useArray)
-          types.forEach(type => (attacher[type][name] = []));
+        if (useObject) types.forEach(type => (attacher[type][name] = {}));
+        else if (useArray) types.forEach(type => (attacher[type][name] = []));
         children.forEach((child, index) =>
           inner(
             child,
-            extra.append
+            append
               ? types.reduce(
                   (acc, type) => ({ ...acc, [type]: attacher[type][name] }),
                   {} as any

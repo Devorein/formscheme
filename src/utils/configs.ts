@@ -21,21 +21,21 @@ export function generateFormSchemeInputDefaultConfigs(
   parents: FormSchemeInputFull[] = [],
   index: number | undefined = 0
 ) {
-  if (!input.extra) input.extra = {};
+  if (!input.input_props) input.input_props = {};
 
   if (input.type === 'group') {
     if (!input.children || input.children.length === 0)
       throw new Error('Grouped FormScheme must have children components');
-    setObjectValues(input.extra, [
+    setObjectValues(input, [
       ['useArray', false],
-      ['useObject', input.extra.useArray ? false : true],
+      ['useObject', input.useArray ? false : true],
       ['treeView', true],
       ['collapse', false],
       ['append', true],
     ]);
   } else {
     input.children = [];
-    setObjectValues(input.extra, [
+    setObjectValues(input, [
       'treeView',
       'collapse',
       'append',
@@ -58,6 +58,8 @@ export function generateFormSchemeInputDefaultConfigs(
     'fieldHandler',
     ['siblings', []],
     ['touched', false],
+    ['selectItems', []],
+    ['radioItems', []],
   ]);
 
   if (!input.label)
@@ -66,25 +68,16 @@ export function generateFormSchemeInputDefaultConfigs(
       .map((c: string) => c.charAt(0).toUpperCase() + c.substr(1))
       .join(' ');
 
-  setObjectValues(input.extra, [
-    ['selectItems', []],
-    ['radioItems', []],
-    'row',
-    'min',
-    'max',
-    'step',
-    'component',
-  ]);
   const full_path = parents
     .reduce((acc, parent) => acc.concat(parent.name), [] as any[])
     .join('.');
   if (!input.key) input.key = (full_path || '') + input.name + index;
 
-  if (input.type === 'radio' && (input?.extra?.radioItems ?? [])?.length === 0)
+  if (input.type === 'radio' && (input?.radioItems ?? [])?.length === 0)
     throw new Error('Radio component must have radio items');
   if (
     input.type === 'select' &&
-    (input?.extra?.selectItems ?? [])?.length === 0
+    (input?.selectItems ?? [])?.length === 0
   )
     throw new Error('Select component must have select items');
 
