@@ -92,6 +92,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
   const {
     onSubmit,
+    onReset,
     validateOnMount,
     children,
     passFormAsProp,
@@ -102,6 +103,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
+      onReset={onReset}
       validationSchema={validationSchema}
       validateOnMount={validateOnMount}
       enableReinitialize={true}

@@ -90,17 +90,19 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     if (type === 'component') return component;
     else if (type === 'select')
       return (
-        <FormControl key={key} disabled={disabled ? disabled : false} fullWidth>
+        <FormControl
+          key={key}
+          disabled={disabled ? disabled : false}
+          fullWidth
+          className={'FormScheme-content-container-component-select'}
+        >
           {!disabled ? (
             <Fragment>
               <InputLabel id={name}>{label}</InputLabel>
               <Select name={name} value={value} onChange={onChange}>
                 {selectItems.map(({ value, label, icon }) => {
                   return (
-                    <MenuItem
-                      key={value ? value : label}
-                      value={value ? value : label}
-                    >
+                    <MenuItem key={value || label} value={value || label}>
                       {icon ? <Icon>{icon}</Icon> : null}
                       {label}
                     </MenuItem>
@@ -121,6 +123,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         ValueLabelComponent={ValueLabelComponent}
         onChangeCommitted={onChange}
         name={name}
+        className={'FormScheme-content-container-component-slider'}
       />;
     else if (type === 'checkbox')
       return (
@@ -129,18 +132,22 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           control={
             <Checkbox
               color={'primary'}
-              checked={value === true ? true : false}
+              checked={value === true}
               name={name}
               onChange={onChange}
               onBlur={handleBlur}
             />
           }
           label={label}
+          className={'FormScheme-content-container-component-checkbox'}
         />
       );
     else if (type === 'radio')
       return (
-        <FormControl key={key}>
+        <FormControl
+          key={key}
+          className={'FormScheme-content-container-component-radio'}
+        >
           <FormLabel component="legend">{label}</FormLabel>
           <RadioGroup row {...generated_props} defaultValue={defaultValue}>
             {radioItems.map(({ label, value }) => (
@@ -163,6 +170,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           type={'number'}
           {...generated_props}
           fullWidth
+          className={'FormScheme-content-container-component-number'}
         />
       );
     else if (type === 'textarea')
@@ -174,11 +182,18 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           rows={row || 5}
           {...generated_props}
           fullWidth
+          className={'FormScheme-content-container-component-textarea'}
         />
       );
     else
       return (
-        <TextField type={'text'} {...generated_props} fullWidth key={key} />
+        <TextField
+          type={'text'}
+          {...generated_props}
+          fullWidth
+          key={key}
+          className={'FormScheme-content-container-component-text'}
+        />
       );
   };
 
@@ -200,38 +215,56 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       name,
     } = input;
     return (
-      <div className={className} key={key}>
-        <div>{label}</div>
-        {helperText !== '' ? (
-          <FormHelperText>{helperText}</FormHelperText>
+      <div className={className || `FormScheme-content-container`} key={key}>
+        <div className={'FormScheme-content-container-label'}>{label}</div>
+        {helperText ? (
+          <FormHelperText className={'FormScheme-content-container-helpertext'}>
+            {helperText}
+          </FormHelperText>
         ) : null}
-        {errorText !== '' ? (
-          <FormHelperText error={true}>{errorText}</FormHelperText>
+        {errorText ? (
+          <FormHelperText
+            className={'FormScheme-content-container-errorText'}
+            error={true}
+          >
+            {errorText}
+          </FormHelperText>
         ) : null}
         {type === 'group' ? (
-          extra.treeView ? (
-            <TreeView
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
-              defaultExpanded={[extra.collapse ? '0' : '1']}
-            >
-              <TreeItem nodeId="1" label={label}>
-                <FormGroup row={false}>
-                  {children.map((child, index) =>
-                    renderFormGroup(child, attacher[name], input, index)
-                  )}
-                </FormGroup>
-              </TreeItem>
-            </TreeView>
-          ) : (
-            <FormGroup row={true}>
-              {children.map((child, index) =>
-                renderFormGroup(child, attacher[name], input, index)
-              )}
-            </FormGroup>
-          )
+          <div className={'FormScheme-content-container-group'}>
+            {extra.treeView ? (
+              <TreeView
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+                defaultExpanded={[extra.collapse ? '0' : '1']}
+                /*               onNodeToggle={e => {
+                  console.log(
+                    (e.target as any).parentElement.parentElement.classList.contains(
+                      'Mui-expanded'
+                    )
+                  );
+                }} */
+              >
+                <TreeItem nodeId="1" label={label}>
+                  <FormGroup row={false}>
+                    {children.map((child, index) =>
+                      renderFormGroup(child, attacher[name], input, index)
+                    )}
+                  </FormGroup>
+                </TreeItem>
+              </TreeView>
+            ) : (
+              <FormGroup row={true}>
+                {children.map((child, index) =>
+                  renderFormGroup(child, attacher[name], input, index)
+                )}
+              </FormGroup>
+            )}
+          </div>
         ) : (
-          renderFormGroupItem(input, attacher, parent, index)
+          <div className={'FormScheme-content-container-component'}>
+            {renderFormGroupItem(input, attacher, parent, index)}
+          </div>
         )}
       </div>
     );
@@ -245,8 +278,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     inputs,
     children,
     resetMsg,
-    resetForm,
-    formButtons = true,
+    handleReset,
+    formButtons,
     classNames,
     disabled,
     values,
@@ -254,36 +287,39 @@ function Form(props: FormPropsFull<Record<string, any>>) {
 
   return (
     <form
-      className={`${classNames ? ' ' + classNames : ''} form`}
+      className={classNames || `Formscheme`}
       onSubmit={handleSubmit}
+      onReset={handleReset}
     >
-      <div className={`form-content`}>
+      <div className={`Formscheme-content`}>
         {inputs.map((input, index) =>
           renderFormGroup(input, values, undefined, index)
         )}
         {children}
       </div>
-      {formButtons ? (
-        <FormGroup row={true}>
-          <Button
-            variant="contained"
-            color="default"
-            onClick={() => {
-              resetForm();
-            }}
-          >
-            {resetMsg || 'Reset'}
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={isSubmitting || !isValid || disabled}
-          >
-            {submitMsg || 'Submit'}
-          </Button>
-        </FormGroup>
-      ) : null}
+      <div className={`Formscheme-buttons`}>
+        {formButtons ? (
+          <FormGroup row={true}>
+            <Button
+              variant="contained"
+              color="default"
+              type="reset"
+              className={'Formscheme-buttons-reset'}
+            >
+              {resetMsg}
+            </Button>
+            <Button
+              className={'Formscheme-buttons-submit'}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSubmitting || !isValid || disabled}
+            >
+              {submitMsg}
+            </Button>
+          </FormGroup>
+        ) : null}
+      </div>
     </form>
   );
 }
