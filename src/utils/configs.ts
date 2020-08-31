@@ -57,6 +57,7 @@ export function generateFormSchemeInputDefaultConfigs(
     'onKeyPress',
     'fieldHandler',
     ['siblings', []],
+    ['touched', false]
   ]);
 
   if (!input.label)
@@ -114,7 +115,7 @@ export function generateFormSchemePropsDefaultConfigs(
       ['resetMsg', 'reset'],
       ['disabled', false],
       ['required', true],
-      'submitTimeout'
+      'submitTimeout',
     ]
   );
   return res as FormSchemePropsFull<Record<string, any>>;

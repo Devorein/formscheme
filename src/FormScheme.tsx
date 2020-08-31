@@ -8,7 +8,6 @@ import {
   FormSchemePropsPartial,
   FormSchemeInputPartial,
   FormSchemeInputFull,
-  // FormSchemeInputFull,
 } from './types';
 import {
   generateFormSchemeInputDefaultConfigs,
@@ -22,6 +21,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     const { inputs } = props.FORMSCHEME_PROPS;
     const initialValues: Record<string, any> = {};
     const initialErrors: Record<string, any> = {};
+    const initialTouched: Record<string, any> = {};
 
     function inner(
       input: FormSchemeInputPartial,
@@ -38,50 +38,78 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         type,
         children,
         name,
+        touched,
         defaultValue,
         extra,
       } = GeneratedFormSchemeInputConfigs;
 
       if (type === 'group') {
-        initialErrors[name] = {};
-        if (extra.useObject) initialValues[name] = {};
-        else if (extra.useArray) initialValues[name] = [];
+        if (extra.useObject) {
+          initialValues[name] = {};
+          initialErrors[name] = {};
+          initialTouched[name] = {};
+        } else if (extra.useArray) {
+          initialValues[name] = [];
+          initialErrors[name] = [];
+          initialTouched[name] = [];
+        }
         children.forEach((child, index) =>
           inner(
             child,
             extra.append
-              ? { values: initialValues[name], errors: initialErrors[name] }
-              : { values: initialValues, errors: initialErrors },
+              ? {
+                  values: initialValues[name],
+                  errors: initialErrors[name],
+                  touched: initialTouched[name],
+                }
+              : {
+                  values: initialValues,
+                  errors: initialErrors,
+                  touched: initialTouched,
+                },
             [...parents, GeneratedFormSchemeInputConfigs],
             index
           )
         );
       } else {
-        if (Array.isArray(attacher.values))
+        const isArray = Array.isArray(attacher.values);
+        if (isArray) {
           attacher.values.push(defaultValue || '');
-        else attacher.values[name] = defaultValue || '';
+          attacher.touched.push(touched);
+        } else {
+          attacher.values[name] = defaultValue || '';
+          attacher.touched[name] = touched;
+        }
         try {
           validationSchema.validateSyncAt(
             defaultValue,
-            Array.isArray(attacher.values)
-              ? attacher.values[index]
-              : attacher.values[name],
+            isArray ? attacher.values[index] : attacher.values[name],
             {
               abortEarly: true,
             }
           );
         } catch (err) {
-          attacher.errors[name] = err.message;
+          if (isArray) attacher.errors[name] = err.message;
+          else attacher.errors.push(err.message);
         }
       }
     }
     inputs.forEach(input =>
       input
-        ? inner(input, { values: initialValues, errors: initialErrors }, [], 0)
+        ? inner(
+            input,
+            {
+              values: initialValues,
+              errors: initialErrors,
+              touched: initialTouched,
+            },
+            [],
+            0
+          )
         : void 0
     );
 
-    return { initialValues, initialErrors };
+    return { initialValues, initialErrors, initialTouched };
   };
 
   const validationSchema = generateYupSchema(props.FORMSCHEME_PROPS.inputs);
@@ -93,11 +121,12 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     children,
     FORMIK_CONFIGS,
   } = GeneratedFormSchemeProps;
-  const { initialValues, initialErrors } = populateInitialValue(
+  const { initialValues, initialErrors, initialTouched } = populateInitialValue(
     validationSchema
   );
   FORMIK_CONFIGS.initialValues = initialValues;
   FORMIK_CONFIGS.initialErrors = initialErrors;
+  FORMIK_CONFIGS.initialTouched = initialTouched;
   FORMIK_CONFIGS.validationSchema = validationSchema;
 
   return (

@@ -53,6 +53,7 @@ export interface FormSchemeInputFull {
     step: number;
     append: boolean;
   };
+  touched: boolean;
   key: string;
   component: JSX.Element;
 }
@@ -86,6 +87,7 @@ export interface FormSchemeInputPartial {
     step?: number;
     append?: boolean;
   };
+  touched?: boolean;
   key?: string;
   component?: JSX.Element;
 }
