@@ -100,6 +100,8 @@ export function generateFormSchemePropsDefaultConfigs(
 ) {
   const res: any = {};
   res.inputs = props.inputs;
+  res.onSubmit = props.onSubmit;
+  res.onReset = props.onReset;
   setObjectValues(
     res,
     [
