@@ -1,9 +1,7 @@
 import { ReactElement, ReactNode, BaseSyntheticEvent } from 'react';
 import {
-  FormikTouched,
   FormikConfig,
   FormikProps,
-  FormikErrors,
 } from 'formik/dist/types';
 
 export type FormElementType =
@@ -17,7 +15,7 @@ export type FormElementType =
   | 'component'
   | 'slider'
   | 'textarea';
-export type GroupType = 'checkbox' | 'select' | 'radio' | 'text' | 'number';
+
 export interface SelectItems {
   value: any;
   label: string;
@@ -50,7 +48,6 @@ export interface FormSchemeInputFull {
     selectItems: SelectItems[];
     radioItems: RadioItems[];
     row: number;
-    groupType: GroupType;
     treeView: boolean;
     collapse: boolean;
     min: number;
@@ -83,7 +80,6 @@ export interface FormSchemeInputPartial {
     selectItems?: SelectItems[];
     radioItems?: RadioItems[];
     row?: number;
-    groupType?: GroupType;
     treeView?: boolean;
     collapse?: boolean;
     min?: number;
@@ -98,62 +94,59 @@ export interface FormSchemeInputPartial {
 export type FormSchemeInputsPartial = FormSchemeInputPartial[];
 export type FormSchemeInputsFull = FormSchemeInputFull[];
 
-export interface FormSchemePropsPartial<Values> extends FormikConfig<Values> {
-  inputs: FormSchemeInputsPartial;
-  customHandler?: (
-    values: Record<string, any>,
-    setValues: (
-      values: Record<string, any>,
-      shouldValidate?: boolean | undefined
-    ) => void,
-    e: BaseSyntheticEvent
-  ) => any;
-  formButtons?: boolean;
-  classNames?: string;
-  errorBeforeTouched?: boolean;
-  submitMsg?: string;
-  resetMsg?: string;
+export interface FormSchemePropsPartial<Values> {
+  FORMIK_CONFIGS: FormikConfig<Values>,
+  FORMSCHEME_PROPS: {
+    inputs: FormSchemeInputsPartial;
+    customHandler?: (
+      values: Values,
+      setValues: (
+        values: Values,
+        shouldValidate?: boolean | undefined
+      ) => void,
+      e: BaseSyntheticEvent
+    ) => any;
+    formButtons?: boolean;
+    classNames?: string;
+    errorBeforeTouched?: boolean;
+    submitMsg?: string;
+    resetMsg?: string;
+    passFormAsProp?: boolean;
+    disabled?: boolean;
+  },
   children?: ReactNode | ((props: any) => ReactElement<any> | null);
-  passFormAsProp?: boolean;
-  disabled?: boolean;
 }
 
-export interface FormSchemePropsFull<Values> extends FormikConfig<Values> {
-  inputs: FormSchemeInputsFull;
-  customHandler:
-    | undefined
+export interface FormSchemePropsFull<Values> {
+  FORMIK_CONFIGS: FormikConfig<Values>,
+  FORMSCHEME_PROPS: {
+    inputs: FormSchemeInputsFull;
+    customHandler: undefined
     | ((
+      values: Record<string, any>,
+      setValues: (
         values: Record<string, any>,
-        setValues: (
-          values: Record<string, any>,
-          shouldValidate?: boolean | undefined
-        ) => void,
-        e: BaseSyntheticEvent
-      ) => any);
-  formButtons: boolean;
-  classNames: undefined | string;
-  errorBeforeTouched: boolean;
-  submitMsg: string;
-  resetMsg: string;
+        shouldValidate?: boolean | undefined
+      ) => void,
+      e: BaseSyntheticEvent
+    ) => any);
+    formButtons: boolean;
+    classNames: undefined | string;
+    errorBeforeTouched: boolean;
+    submitMsg: string;
+    resetMsg: string;
+    passFormAsProp: boolean;
+    disabled: boolean;
+  },
   children: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
-  passFormAsProp: boolean;
-  disabled: boolean;
 }
 
 export interface FormPropsPartial<Values>
-  extends FormSchemePropsPartial<Values>,
-    FormikProps<Values> {
-  initialValues: Values;
-  initialStatus?: any;
-  initialErrors: FormikErrors<Values>;
-  initialTouched: FormikTouched<Values>;
+  extends FormSchemePropsPartial<Values> {
+  FORMIK_PROPS: FormikProps<Values>
 }
 
 export interface FormPropsFull<Values>
-  extends FormSchemePropsFull<Values>,
-    FormikProps<Values> {
-  initialValues: Values;
-  initialStatus?: any;
-  initialErrors: FormikErrors<Values>;
-  initialTouched: FormikTouched<Values>;
+  extends FormSchemePropsFull<Values> {
+  FORMIK_PROPS: FormikProps<Values>
 }

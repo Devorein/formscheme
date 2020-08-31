@@ -19,7 +19,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   const populateInitialValue = (
     validationSchema: ObjectSchema<Record<string, any> | undefined>
   ) => {
-    const { inputs } = props;
+    const { inputs } = props.FORMSCHEME_PROPS;
     const initialValues: Record<string, any> = {};
     const initialErrors: Record<string, any> = {};
 
@@ -84,40 +84,35 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     return { initialValues, initialErrors };
   };
 
-  const validationSchema = generateYupSchema(props.inputs);
+  const validationSchema = generateYupSchema(props.FORMSCHEME_PROPS.inputs);
+
+  const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
+
+  const {
+    FORMSCHEME_PROPS: { passFormAsProp },
+    children,
+    FORMIK_CONFIGS,
+  } = GeneratedFormSchemeProps;
   const { initialValues, initialErrors } = populateInitialValue(
     validationSchema
   );
-
-  const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
-  const {
-    onSubmit,
-    onReset,
-    validateOnMount,
-    children,
-    passFormAsProp,
-    initialTouched,
-  } = GeneratedFormSchemeProps;
+  FORMIK_CONFIGS.initialValues = initialValues;
+  FORMIK_CONFIGS.initialErrors = initialErrors;
+  FORMIK_CONFIGS.validationSchema = validationSchema;
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      onReset={onReset}
-      validationSchema={validationSchema}
-      validateOnMount={validateOnMount}
-      enableReinitialize={true}
-      initialTouched={initialTouched || {}}
-      initialErrors={initialErrors}
-    >
+    <Formik {...FORMIK_CONFIGS}>
       {formik_props => {
-        const FORM = <Form {...formik_props} {...GeneratedFormSchemeProps} />;
+        const FORM = (
+          <Form FORMIK_PROPS={formik_props} {...GeneratedFormSchemeProps} />
+        );
         return (
           <Fragment>
             {passFormAsProp ? null : FORM}
             {typeof children === 'function'
               ? children({
-                  ...props,
+                  FORMIK_PROPS: formik_props,
+                  ...GeneratedFormSchemeProps,
                   FORM: passFormAsProp ? FORM : null,
                 })
               : children}

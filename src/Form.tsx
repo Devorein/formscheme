@@ -38,7 +38,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     parent: undefined | FormSchemeInputFull,
     index: number
   ) => {
-    const { handleBlur } = props;
+    const { handleBlur } = props.FORMIK_PROPS;
     const {
       name,
       label,
@@ -57,7 +57,10 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       parent && parent.extra.useArray ? attacher[index] : attacher[name];
     let generated_props = null;
     const onChange = (e: BaseSyntheticEvent) => {
-      const { setValues, customHandler, setFieldTouched } = props;
+      const {
+        FORMIK_PROPS: { setValues, setFieldTouched },
+        FORMSCHEME_PROPS: { customHandler },
+      } = props;
       if (e.persist) e.persist();
       attacher[parent && parent.extra.useArray ? index : e.target.name] =
         typeof e.target.value !== 'undefined'
@@ -274,25 +277,27 @@ function Form(props: FormPropsFull<Record<string, any>>) {
   };
 
   const {
-    handleSubmit,
-    isValid,
-    isSubmitting,
-    submitMsg,
-    inputs,
+    FORMIK_PROPS: { handleSubmit, isValid, isSubmitting, handleReset, values },
+    FORMSCHEME_PROPS: {
+      inputs,
+      submitMsg,
+      resetMsg,
+      formButtons,
+      classNames,
+      disabled,
+    },
     children,
-    resetMsg,
-    handleReset,
-    formButtons,
-    classNames,
-    disabled,
-    values,
   } = props;
 
   return (
     <form
       className={classNames || `Formscheme`}
-      onSubmit={handleSubmit}
-      onReset={handleReset}
+      onSubmit={() => {
+        handleSubmit();
+      }}
+      onReset={() => {
+        handleReset();
+      }}
     >
       <div className={`Formscheme-content`}>
         {inputs.map((input, index) =>

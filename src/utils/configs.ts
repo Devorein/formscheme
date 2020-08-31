@@ -98,12 +98,11 @@ export function generateFormSchemeInputDefaultConfigs(
 export function generateFormSchemePropsDefaultConfigs(
   props: FormSchemePropsPartial<Record<string, any>>
 ) {
-  const res: any = {};
-  res.inputs = props.inputs;
-  res.onSubmit = props.onSubmit;
-  res.onReset = props.onReset;
+  const res: any = { FORMSCHEME_PROPS: {}, FORMIK_CONFIGS: props.FORMIK_CONFIGS };
+  if (!props.FORMSCHEME_PROPS.inputs) throw new Error("You should pass inputs props to FORMSCHEME_PROPS")
+  res.FORMSCHEME_PROPS.inputs = props.FORMSCHEME_PROPS.inputs;
   setObjectValues(
-    res,
+    res.FORMSCHEME_PROPS,
     [
       'customHandler',
       ['formButtons', true],
@@ -115,7 +114,7 @@ export function generateFormSchemePropsDefaultConfigs(
       ['resetMsg', 'reset'],
       ['disabled', false],
     ],
-    props
+    props.FORMSCHEME_PROPS
   );
   return res as FormSchemePropsFull<Record<string, any>>;
 }
