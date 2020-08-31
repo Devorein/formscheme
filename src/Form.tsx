@@ -171,6 +171,11 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           key={key}
           defaultValue={defaultValue}
           type={'number'}
+          inputProps={{
+            min,
+            max,
+            step,
+          }}
           {...generated_props}
           fullWidth
           className={'FormScheme-content-container-component-number'}
@@ -182,7 +187,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           key={key}
           type={'text'}
           multiline
-          rows={row || 5}
+          rows={row}
           {...generated_props}
           fullWidth
           className={'FormScheme-content-container-component-textarea'}
