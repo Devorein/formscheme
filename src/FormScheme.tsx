@@ -82,8 +82,8 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
           );
         } catch (err) {
           isArray
-            ? (attacher.errors[name] = err.message)
-            : attacher.errors.push(err.message);
+            ? attacher.errors.push(err.message)
+            : (attacher.errors[name] = err.message);
         }
       }
     }
