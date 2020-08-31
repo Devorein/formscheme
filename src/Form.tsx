@@ -237,15 +237,18 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                 defaultCollapseIcon={<ExpandMoreIcon />}
                 defaultExpandIcon={<ChevronRightIcon />}
                 defaultExpanded={[extra.collapse ? '0' : '1']}
-                /*               onNodeToggle={e => {
-                  console.log(
-                    (e.target as any).parentElement.parentElement.classList.contains(
-                      'Mui-expanded'
-                    )
-                  );
-                }} */
+                onNodeToggle={e => {
+                  const parent = (e.target as any).parentElement;
+                  const is_expanded = !parent.nextElementSibling;
+                  parent.lastElementChild.textContent = is_expanded
+                    ? 'Collapse'
+                    : 'Expand';
+                }}
               >
-                <TreeItem nodeId="1" label={label}>
+                <TreeItem
+                  nodeId="1"
+                  label={extra.collapse ? 'Expand' : 'Collapse'}
+                >
                   <FormGroup row={false}>
                     {children.map((child, index) =>
                       renderFormGroup(child, attacher[name], input, index)
