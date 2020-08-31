@@ -65,11 +65,12 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         );
       } else {
         const isArray = Array.isArray(attacher.values);
+        const is_number = type.match(/(slider|number)/);
         if (isArray) {
-          attacher.values.push(defaultValue || '');
+          attacher.values.push(defaultValue || (is_number ? 0 : ''));
           attacher.touched.push(touched);
         } else {
-          attacher.values[name] = defaultValue || '';
+          attacher.values[name] = defaultValue || (is_number ? 0 : '');
           attacher.touched[name] = touched;
         }
         try {

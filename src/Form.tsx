@@ -41,7 +41,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     const {
       name,
       label,
-      type = 'text',
+      type,
       disabled,
       fieldHandler,
       component,
@@ -55,16 +55,16 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     const value =
       parent && parent.extra.useArray ? attacher[index] : attacher[name];
     let generated_props = null;
+
+    const {
+      FORMIK_PROPS: { setValues, values, setFieldTouched },
+      FORMSCHEME_PROPS: { customHandler },
+    } = props;
+
     const onChange = (e: BaseSyntheticEvent) => {
-      const {
-        FORMIK_PROPS: { setValues, setFieldTouched },
-        FORMSCHEME_PROPS: { customHandler },
-      } = props;
       if (e.persist) e.persist();
       attacher[parent && parent.extra.useArray ? index : e.target.name] =
-        typeof e.target.value !== 'undefined'
-          ? e.target.value
-          : e.target.checked;
+        type !== 'checkbox' ? e.target.value : e.target.checked;
       setValues({ ...values });
       if (fieldHandler) fieldHandler(e.target.value);
       if (customHandler) customHandler(values, setValues, e);
@@ -111,30 +111,35 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         </Select>
       );
     else if (type === 'slider')
-      <Slider
-        value={value}
-        min={min}
-        max={max}
-        step={step}
-        ValueLabelComponent={ValueLabelComponent}
-        onChangeCommitted={onChange}
-        name={name}
-        className={className || 'FormScheme-content-container-component-slider'}
-      />;
+      return (
+        <Slider
+          value={value}
+          min={min}
+          max={max}
+          step={step}
+          ValueLabelComponent={ValueLabelComponent}
+          onChangeCommitted={(_, value) => {
+            attacher[parent && parent.extra.useArray ? index : name] = value;
+            setValues({ ...values });
+          }}
+          name={name}
+          className={
+            className || 'FormScheme-content-container-component-slider'
+          }
+        />
+      );
     else if (type === 'checkbox')
       return (
-        <FormGroup>
-          <Checkbox
-            color={'primary'}
-            checked={value === true}
-            name={name}
-            onChange={onChange}
-            onBlur={handleBlur}
-            className={
-              className || 'FormScheme-content-container-component-checkbox'
-            }
-          />
-        </FormGroup>
+        <Checkbox
+          className={
+            className || 'FormScheme-content-container-component-checkbox'
+          }
+          color={'primary'}
+          checked={value === true}
+          name={name}
+          onChange={onChange}
+          onBlur={handleBlur}
+        />
       );
     else if (type === 'radio')
       return (
