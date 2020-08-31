@@ -8,16 +8,11 @@ import {
 function setObjectValues(
   parent: any,
   arr: (string | [string, any | undefined])[],
-  against?: any
 ) {
   arr.forEach(entry => {
-    against = against || parent;
-    const should_add = against
-      ? typeof against[entry[0]] === 'undefined'
-      : typeof parent[entry[0]] === 'undefined';
     if (Array.isArray(entry)) {
-      if (should_add) parent[entry[0]] = entry[1];
-    } else if (should_add) parent[entry] = undefined;
+      if (typeof parent[entry[0]] === 'undefined') parent[entry[0]] = entry[1];
+    } else if (typeof parent[entry] === 'undefined') parent[entry] = undefined;
   });
 }
 
@@ -98,9 +93,14 @@ export function generateFormSchemeInputDefaultConfigs(
 export function generateFormSchemePropsDefaultConfigs(
   props: FormSchemePropsPartial<Record<string, any>>
 ) {
-  const res: any = { FORMSCHEME_PROPS: {}, FORMIK_CONFIGS: props.FORMIK_CONFIGS };
-  if (!props.FORMSCHEME_PROPS.inputs) throw new Error("You should pass inputs props to FORMSCHEME_PROPS")
-  res.FORMSCHEME_PROPS.inputs = props.FORMSCHEME_PROPS.inputs;
+  const res: any = {
+    FORMSCHEME_PROPS: {},
+    FORMIK_CONFIGS: props.FORMIK_CONFIGS,
+  };
+  if (!props.FORMSCHEME_PROPS.inputs)
+    throw new Error('You should pass inputs props to FORMSCHEME_PROPS');
+  res.FORMSCHEME_PROPS = { ...props.FORMSCHEME_PROPS };
+
   setObjectValues(
     res.FORMSCHEME_PROPS,
     [
@@ -113,8 +113,9 @@ export function generateFormSchemePropsDefaultConfigs(
       ['submitMsg', 'submit'],
       ['resetMsg', 'reset'],
       ['disabled', false],
-    ],
-    props.FORMSCHEME_PROPS
+      ['required', true],
+      'submitTimeout'
+    ]
   );
   return res as FormSchemePropsFull<Record<string, any>>;
 }

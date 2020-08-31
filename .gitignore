@@ -10,3 +10,4 @@ package.lock.json
 .cache
 /src/utils/copy.js
 /feature.md
+formscheme.code-workspace

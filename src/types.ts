@@ -1,8 +1,5 @@
 import { ReactElement, ReactNode, BaseSyntheticEvent } from 'react';
-import {
-  FormikConfig,
-  FormikProps,
-} from 'formik/dist/types';
+import { FormikConfig, FormikProps } from 'formik/dist/types';
 
 export type FormElementType =
   | 'checkbox'
@@ -29,6 +26,7 @@ export interface RadioItems {
 
 export interface FormSchemeInputFull {
   disabled: boolean;
+  required: boolean;
   className: string | undefined;
   children: FormSchemeInputsFull;
   placeholder: string;
@@ -62,6 +60,7 @@ export interface FormSchemeInputFull {
 export interface FormSchemeInputPartial {
   disabled?: boolean;
   className?: string;
+  required?: boolean;
   children?: FormSchemeInputsPartial;
   placeholder?: string;
   type?: FormElementType;
@@ -95,15 +94,12 @@ export type FormSchemeInputsPartial = FormSchemeInputPartial[];
 export type FormSchemeInputsFull = FormSchemeInputFull[];
 
 export interface FormSchemePropsPartial<Values> {
-  FORMIK_CONFIGS: FormikConfig<Values>,
+  FORMIK_CONFIGS: FormikConfig<Values>;
   FORMSCHEME_PROPS: {
     inputs: FormSchemeInputsPartial;
     customHandler?: (
       values: Values,
-      setValues: (
-        values: Values,
-        shouldValidate?: boolean | undefined
-      ) => void,
+      setValues: (values: Values, shouldValidate?: boolean | undefined) => void,
       e: BaseSyntheticEvent
     ) => any;
     formButtons?: boolean;
@@ -113,15 +109,17 @@ export interface FormSchemePropsPartial<Values> {
     resetMsg?: string;
     passFormAsProp?: boolean;
     disabled?: boolean;
-  },
+    submitTimeout?: number;
+  };
   children?: ReactNode | ((props: any) => ReactElement<any> | null);
 }
 
 export interface FormSchemePropsFull<Values> {
-  FORMIK_CONFIGS: FormikConfig<Values>,
+  FORMIK_CONFIGS: FormikConfig<Values>;
   FORMSCHEME_PROPS: {
     inputs: FormSchemeInputsFull;
-    customHandler: undefined
+    customHandler:
+    | undefined
     | ((
       values: Record<string, any>,
       setValues: (
@@ -137,16 +135,16 @@ export interface FormSchemePropsFull<Values> {
     resetMsg: string;
     passFormAsProp: boolean;
     disabled: boolean;
-  },
+    submitTimeout: undefined | number;
+  };
   children: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
 }
 
 export interface FormPropsPartial<Values>
   extends FormSchemePropsPartial<Values> {
-  FORMIK_PROPS: FormikProps<Values>
+  FORMIK_PROPS: FormikProps<Values>;
 }
 
-export interface FormPropsFull<Values>
-  extends FormSchemePropsFull<Values> {
-  FORMIK_PROPS: FormikProps<Values>
+export interface FormPropsFull<Values> extends FormSchemePropsFull<Values> {
+  FORMIK_PROPS: FormikProps<Values>;
 }

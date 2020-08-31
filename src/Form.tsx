@@ -277,7 +277,14 @@ function Form(props: FormPropsFull<Record<string, any>>) {
   };
 
   const {
-    FORMIK_PROPS: { handleSubmit, isValid, isSubmitting, handleReset, values },
+    FORMIK_PROPS: {
+      handleSubmit,
+      isValid,
+      isSubmitting,
+      handleReset,
+      values,
+      setSubmitting,
+    },
     FORMSCHEME_PROPS: {
       inputs,
       submitMsg,
@@ -285,15 +292,22 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       formButtons,
       classNames,
       disabled,
+      submitTimeout,
     },
     children,
   } = props;
-
   return (
     <form
       className={classNames || `Formscheme`}
-      onSubmit={() => {
-        handleSubmit();
+      onSubmit={e => {
+        e.preventDefault();
+        if (typeof submitTimeout === 'number') {
+          setSubmitting(true);
+          setTimeout(() => {
+            handleSubmit();
+            setSubmitting(false);
+          }, submitTimeout);
+        } else handleSubmit();
       }}
       onReset={() => {
         handleReset();
