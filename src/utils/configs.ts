@@ -7,7 +7,7 @@ import {
 
 function setObjectValues(
   parent: any,
-  arr: (string | [string, any | undefined])[],
+  arr: (string | [string, any | undefined])[]
 ) {
   arr.forEach(entry => {
     if (Array.isArray(entry)) {
@@ -57,7 +57,7 @@ export function generateFormSchemeInputDefaultConfigs(
     'onKeyPress',
     'fieldHandler',
     ['siblings', []],
-    ['touched', false]
+    ['touched', false],
   ]);
 
   if (!input.label)
@@ -102,21 +102,18 @@ export function generateFormSchemePropsDefaultConfigs(
     throw new Error('You should pass inputs props to FORMSCHEME_PROPS');
   res.FORMSCHEME_PROPS = { ...props.FORMSCHEME_PROPS };
 
-  setObjectValues(
-    res.FORMSCHEME_PROPS,
-    [
-      'customHandler',
-      ['formButtons', true],
-      'classNames',
-      'children',
-      ['passFormAsProp', true],
-      ['errorBeforeTouched', true],
-      ['submitMsg', 'submit'],
-      ['resetMsg', 'reset'],
-      ['disabled', false],
-      ['required', true],
-      'submitTimeout',
-    ]
-  );
+  setObjectValues(res.FORMSCHEME_PROPS, [
+    'customHandler',
+    ['formButtons', true],
+    'classNames',
+    'children',
+    ['passFormAsProp', true],
+    ['errorBeforeTouched', true],
+    ['submitMsg', 'submit'],
+    ['resetMsg', 'reset'],
+    ['disabled', false],
+    ['required', true],
+    'submitTimeout',
+  ]);
   return res as FormSchemePropsFull<Record<string, any>>;
 }

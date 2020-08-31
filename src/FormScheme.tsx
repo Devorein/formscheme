@@ -22,7 +22,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     const initialValues: Record<string, any> = {};
     const initialErrors: Record<string, any> = {};
     const initialTouched: Record<string, any> = {};
-
+    const types = ['values', 'errors', 'touched'];
     function inner(
       input: FormSchemeInputPartial,
       attacher: Record<string, any>,
@@ -44,29 +44,21 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
       } = GeneratedFormSchemeInputConfigs;
 
       if (type === 'group') {
-        if (extra.useObject) {
-          initialValues[name] = {};
-          initialErrors[name] = {};
-          initialTouched[name] = {};
-        } else if (extra.useArray) {
-          initialValues[name] = [];
-          initialErrors[name] = [];
-          initialTouched[name] = [];
-        }
+        if (extra.useObject) types.forEach(type => (attacher[type][name] = {}));
+        else if (extra.useArray)
+          types.forEach(type => (attacher[type][name] = []));
         children.forEach((child, index) =>
           inner(
             child,
             extra.append
-              ? {
-                  values: initialValues[name],
-                  errors: initialErrors[name],
-                  touched: initialTouched[name],
-                }
-              : {
-                  values: initialValues,
-                  errors: initialErrors,
-                  touched: initialTouched,
-                },
+              ? types.reduce(
+                  (acc, type) => ({ ...acc, [type]: attacher[type][name] }),
+                  {} as any
+                )
+              : types.reduce(
+                  (acc, type) => ({ ...acc, [type]: attacher[type] }),
+                  {} as any
+                ),
             [...parents, GeneratedFormSchemeInputConfigs],
             index
           )
@@ -89,8 +81,9 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
             }
           );
         } catch (err) {
-          if (isArray) attacher.errors[name] = err.message;
-          else attacher.errors.push(err.message);
+          isArray
+            ? (attacher.errors[name] = err.message)
+            : attacher.errors.push(err.message);
         }
       }
     }
