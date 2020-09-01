@@ -26,14 +26,17 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
     function inner(
       input: FormSchemeInputPartial,
       attacher: Record<string, any>,
-      parents: FormSchemeInputFull[] = [],
+      full_path: string = '',
+      parent: undefined | FormSchemeInputFull,
       index: number
     ) {
       const GeneratedFormSchemeInputConfigs = generateFormSchemeInputDefaultConfigs(
         input,
-        parents,
+        full_path,
+        parent,
         index
       );
+      const isArray = parent?.useArray ?? false;
       const {
         type,
         children,
@@ -42,37 +45,42 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         defaultValue,
         useArray,
         useObject,
-        append,
       } = GeneratedFormSchemeInputConfigs;
-
+      // debugger;
       if (type === 'group') {
-        if (useObject) types.forEach(type => (attacher[type][name] = {}));
-        else if (useArray) types.forEach(type => (attacher[type][name] = []));
-        children.forEach((child, index) =>
+        if (useObject) {
+          types.forEach(type => (attacher[type][isArray ? index : name] = {}));
+          full_path += `${isArray ? `[${index}]` : name}.`;
+        } else if (useArray) {
+          types.forEach(type => (attacher[type][isArray ? index : name] = []));
+          full_path += `${name}`;
+        }
+        children.forEach((child, _index) =>
           inner(
             child,
-            append
-              ? types.reduce(
-                  (acc, type) => ({ ...acc, [type]: attacher[type][name] }),
-                  {} as any
-                )
-              : types.reduce(
-                  (acc, type) => ({ ...acc, [type]: attacher[type] }),
+              types.reduce(
+                  (acc, type) => ({
+                    ...acc,
+                    [type]: attacher[type][isArray ? index : name],
+                  }),
                   {} as any
                 ),
-            [...parents, GeneratedFormSchemeInputConfigs],
-            index
+              
+            full_path,
+            GeneratedFormSchemeInputConfigs,
+            _index
           )
         );
       } else {
-        const isArray = Array.isArray(attacher.values);
         const is_number = type.match(/(slider|number)/);
         if (isArray) {
           attacher.values.push(defaultValue || (is_number ? 0 : ''));
           attacher.touched.push(touched);
+          full_path += `[${index}]`;
         } else {
           attacher.values[name] = defaultValue || (is_number ? 0 : '');
           attacher.touched[name] = touched;
+          full_path += `${name}`;
         }
         try {
           validationSchema.validateSyncAt(
@@ -89,19 +97,18 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         }
       }
     }
-    inputs.forEach(input =>
-      input
-        ? inner(
-            input,
-            {
-              values: initialValues,
-              errors: initialErrors,
-              touched: initialTouched,
-            },
-            [],
-            0
-          )
-        : void 0
+    inputs.forEach((input, index) =>
+      inner(
+        input,
+        {
+          values: initialValues,
+          errors: initialErrors,
+          touched: initialTouched,
+        },
+        '',
+        undefined,
+        index
+      )
     );
 
     return { initialValues, initialErrors, initialTouched };
@@ -118,6 +125,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   const { initialValues, initialErrors, initialTouched } = populateInitialValue(
     validationSchema
   );
+
   FORMIK_CONFIGS.initialValues = initialValues;
   FORMIK_CONFIGS.initialErrors = initialErrors;
   FORMIK_CONFIGS.initialTouched = initialTouched;

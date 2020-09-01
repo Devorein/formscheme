@@ -18,10 +18,10 @@ function setObjectValues(
 
 export function generateFormSchemeInputDefaultConfigs(
   input: FormSchemeInputPartial,
-  parents: FormSchemeInputFull[] = [],
+  full_path: string,
+  parent: undefined | FormSchemeInputFull,
   index: number | undefined = 0
 ) {
-  const parent = parents[parents.length - 1];
   if (!input.input_props) input.input_props = {};
 
   if (input.type === 'group') {
@@ -69,9 +69,6 @@ export function generateFormSchemeInputDefaultConfigs(
       .map((c: string) => c.charAt(0).toUpperCase() + c.substr(1))
       .join(' ');
 
-  const full_path = parents
-    .reduce((acc, parent) => acc.concat(parent.name), [] as any[])
-    .join('.');
   if (!input.key) input.key = full_path + input.name + index;
 
   if (input.type === 'radio' && (input?.radioItems ?? [])?.length === 0)
@@ -83,6 +80,7 @@ export function generateFormSchemeInputDefaultConfigs(
     `${
     parent ? (parent.useArray ? `[${index}]` : `.${input.name}`) : input.name
     }`;
+  // console.log((input as FormSchemeInputFull).full_path);
   return input as FormSchemeInputFull;
 }
 
