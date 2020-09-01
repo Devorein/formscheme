@@ -93,7 +93,6 @@ export function generateFormSchemePropsDefaultConfigs(
   res.FORMSCHEME_PROPS = { ...props.FORMSCHEME_PROPS };
 
   setObjectValues(res.FORMSCHEME_PROPS, [
-    'customHandler',
     ['formButtons', true],
     'classNames',
     ['passFormAsProp', true],

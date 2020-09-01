@@ -54,7 +54,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       classNames,
       disabled: form_disabled,
       submitTimeout,
-      customHandler,
     },
     children,
   } = props;
@@ -97,8 +96,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       attacher.values[parent && parent.useArray ? index : e.target.name] =
         type !== 'checkbox' ? e.target.value : e.target.checked;
       setValues(JSON.parse(JSON.stringify(values)), true);
-      if (fieldHandler) fieldHandler(e.target.value);
-      if (customHandler) customHandler(values, setValues, e);
       attacher.touched[
         parent && parent.useArray ? index : e.target.name
       ] = true;

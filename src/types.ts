@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, BaseSyntheticEvent } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { FormikConfig, FormikProps } from 'formik/dist/types';
 
 export type FormElementType =
@@ -89,11 +89,6 @@ export interface FormSchemePropsPartial<Values> {
   FORMIK_CONFIGS: FormikConfig<Values>;
   FORMSCHEME_PROPS: {
     inputs: FormSchemeInputsPartial;
-    customHandler?: (
-      values: Values,
-      setValues: (values: Values, shouldValidate?: boolean | undefined) => void,
-      e: BaseSyntheticEvent
-    ) => any;
     formButtons?: boolean;
     classNames?: string;
     errorBeforeTouched?: boolean;
@@ -112,16 +107,6 @@ export interface FormSchemePropsFull<Values> {
   FORMIK_CONFIGS: FormikConfig<Values>;
   FORMSCHEME_PROPS: {
     inputs: FormSchemeInputsFull;
-    customHandler:
-      | undefined
-      | ((
-          values: Record<string, any>,
-          setValues: (
-            values: Record<string, any>,
-            shouldValidate?: boolean | undefined
-          ) => void,
-          e: BaseSyntheticEvent
-        ) => any);
     formButtons: boolean;
     classNames: undefined | string;
     errorBeforeTouched: boolean;
