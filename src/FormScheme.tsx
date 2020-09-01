@@ -44,28 +44,24 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         touched,
         defaultValue,
         useArray,
-        useObject,
       } = GeneratedFormSchemeInputConfigs;
-      // debugger;
       if (type === 'group') {
-        if (useObject) {
-          types.forEach(type => (attacher[type][isArray ? index : name] = {}));
-          full_path += `${isArray ? `[${index}]` : name}.`;
-        } else if (useArray) {
-          types.forEach(type => (attacher[type][isArray ? index : name] = []));
-          full_path += `${name}`;
-        }
+        types.forEach(
+          type => (attacher[type][isArray ? index : name] = useArray ? [] : {})
+        );
+        full_path += `${
+          isArray ? `[${index}]` : `${full_path ? `.${name}` : name}`
+        }`;
         children.forEach((child, _index) =>
           inner(
             child,
-              types.reduce(
-                  (acc, type) => ({
-                    ...acc,
-                    [type]: attacher[type][isArray ? index : name],
-                  }),
-                  {} as any
-                ),
-              
+            types.reduce(
+              (acc, type) => ({
+                ...acc,
+                [type]: attacher[type][isArray ? index : name],
+              }),
+              {} as any
+            ),
             full_path,
             GeneratedFormSchemeInputConfigs,
             _index
@@ -73,15 +69,10 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         );
       } else {
         const is_number = type.match(/(slider|number)/);
-        if (isArray) {
-          attacher.values.push(defaultValue || (is_number ? 0 : ''));
-          attacher.touched.push(touched);
-          full_path += `[${index}]`;
-        } else {
-          attacher.values[name] = defaultValue || (is_number ? 0 : '');
-          attacher.touched[name] = touched;
-          full_path += `${name}`;
-        }
+        attacher.values[isArray ? index : name] =
+          defaultValue || (is_number ? 0 : '');
+        attacher.touched[isArray ? index : name] = touched;
+        full_path += name;
         try {
           validationSchema.validateSyncAt(
             defaultValue,

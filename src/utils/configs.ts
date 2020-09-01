@@ -78,7 +78,7 @@ export function generateFormSchemeInputDefaultConfigs(
   (input as FormSchemeInputFull).full_path =
     full_path +
     `${
-    parent ? (parent.useArray ? `[${index}]` : `.${input.name}`) : input.name
+      parent ? (parent.useArray ? `[${index}]` : `.${input.name}`) : input.name
     }`;
   // console.log((input as FormSchemeInputFull).full_path);
   return input as FormSchemeInputFull;
