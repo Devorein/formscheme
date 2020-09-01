@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent } from 'react';
+import React /* , { BaseSyntheticEvent } */ from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -38,9 +38,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       isSubmitting,
       handleReset,
       setSubmitting,
-      setTouched,
+      handleChange,
       handleBlur,
-      setValues,
       values,
       touched,
     },
@@ -61,7 +60,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
   const renderFormGroupItem = (
     input: FormSchemeInputFull,
     attacher: Record<string, any>,
-    parent: undefined | FormSchemeInputFull,
+    parents: FormSchemeInputFull[],
     index: number
   ) => {
     const {
@@ -78,31 +77,24 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       onKeyPress,
       className,
     } = input;
+    const parent = parents[parents.length - 1];
     const value =
       parent && parent.useArray
         ? attacher.values[index]
         : attacher.values[name];
 
     const common_props: any = {
-      name,
+      name: parents
+        .reduce((acc, parent) => acc.concat(parent.name), [] as any)
+        .concat(name)
+        .join('.'),
       value,
       onBlur: handleBlur,
       disabled,
       className: className || `FormScheme-content-container-component-${type}`,
     };
 
-    const onChange = (e: BaseSyntheticEvent) => {
-      if (e.persist) e.persist();
-      attacher.values[parent && parent.useArray ? index : e.target.name] =
-        type !== 'checkbox' ? e.target.value : e.target.checked;
-      setValues(JSON.parse(JSON.stringify(values)), true);
-      attacher.touched[
-        parent && parent.useArray ? index : e.target.name
-      ] = true;
-      setTouched(JSON.parse(JSON.stringify(touched)), true);
-    };
-
-    if (type !== 'slider') common_props.onChange = onChange;
+    if (type !== 'slider') common_props.onChange = handleChange;
 
     if (!controlled) {
       common_props.onKeyPress = onKeyPress;
@@ -127,9 +119,9 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       return (
         <Slider
           ValueLabelComponent={ValueLabelComponent}
-          onChangeCommitted={(_, value) => {
-            attacher.values[parent && parent.useArray ? index : name] = value;
-            setValues({ ...values });
+          onChangeCommitted={(e, value) => {
+            (e.target as any).value = value;
+            handleChange(e);
           }}
           {...common_props}
           {...input_props}
@@ -182,7 +174,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
   const renderFormGroup = (
     input: FormSchemeInputFull,
     attacher: Record<string, any>,
-    parent: undefined | FormSchemeInputFull,
+    parents: FormSchemeInputFull[],
     index: number
   ) => {
     const {
@@ -241,7 +233,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                         values: attacher.values[name],
                         touched: attacher.touched[name],
                       },
-                      input,
+                      [...parents, input],
                       index
                     )
                   )}
@@ -257,14 +249,14 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                     values: attacher.values[name],
                     touched: attacher.touched[name],
                   },
-                  input,
+                  [...parents, input],
                   index
                 )
               )}
             </FormGroup>
           )
         ) : (
-          renderFormGroupItem(input, attacher, parent, index)
+          renderFormGroupItem(input, attacher, parents, index)
         )}
       </FormControl>
     );
@@ -289,7 +281,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     >
       <div className={`Formscheme-content`}>
         {inputs.map((input, index) =>
-          renderFormGroup(input, { values, touched }, undefined, index)
+          renderFormGroup(input, { values, touched }, [], index)
         )}
         {children}
       </div>
