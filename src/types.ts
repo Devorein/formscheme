@@ -111,15 +111,15 @@ export interface FormSchemePropsFull<Values> {
   FORMSCHEME_PROPS: {
     inputs: FormSchemeInputsFull;
     customHandler:
-    | undefined
-    | ((
-      values: Record<string, any>,
-      setValues: (
-        values: Record<string, any>,
-        shouldValidate?: boolean | undefined
-      ) => void,
-      e: BaseSyntheticEvent
-    ) => any);
+      | undefined
+      | ((
+          values: Record<string, any>,
+          setValues: (
+            values: Record<string, any>,
+            shouldValidate?: boolean | undefined
+          ) => void,
+          e: BaseSyntheticEvent
+        ) => any);
     formButtons: boolean;
     classNames: undefined | string;
     errorBeforeTouched: boolean;

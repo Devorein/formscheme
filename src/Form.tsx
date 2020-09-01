@@ -37,10 +37,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     parent: undefined | FormSchemeInputFull,
     index: number
   ) => {
-    const { handleBlur } = props.FORMIK_PROPS;
     const {
       name,
-      label,
       type,
       disabled,
       fieldHandler,
@@ -49,7 +47,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       selectItems,
       radioItems,
       key,
-      placeholder,
       controlled,
       onKeyPress,
       className,
@@ -58,7 +55,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     let generated_props = null;
 
     const {
-      FORMIK_PROPS: { setValues, values, setFieldTouched },
+      FORMIK_PROPS: { handleBlur, setValues, values, touched, setTouched },
       FORMSCHEME_PROPS: { customHandler },
     } = props;
 
@@ -66,41 +63,32 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       if (e.persist) e.persist();
       attacher[parent && parent.useArray ? index : e.target.name] =
         type !== 'checkbox' ? e.target.value : e.target.checked;
-      setValues({ ...values });
+      setValues({ ...values }, true);
       if (fieldHandler) fieldHandler(e.target.value);
       if (customHandler) customHandler(values, setValues, e);
-      setFieldTouched(e.target.name, true, false);
+      setTouched({ ...touched }, true);
     };
 
     if (controlled)
       generated_props = {
         name,
         value,
-        onChange,
         onBlur: handleBlur,
-        label,
-        placeholder,
         disabled,
+        className:
+          className || `FormScheme-content-container-component-${type}`,
       };
     else
       generated_props = {
         name,
         onKeyPress,
         onChange: fieldHandler,
-        label,
       };
+    if (type !== 'slider') generated_props.onChange = onChange;
     if (type === 'component') return component;
     else if (type === 'select')
       return (
-        <Select
-          name={name}
-          value={value}
-          onChange={onChange}
-          className={
-            className || 'FormScheme-content-container-component-select'
-          }
-          {...input_props}
-        >
+        <Select {...generated_props} {...input_props}>
           {selectItems.map(({ value, label, icon }, index) => {
             return (
               <MenuItem key={key + label + index} value={value}>
@@ -114,43 +102,27 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     else if (type === 'slider')
       return (
         <Slider
-          value={value}
           ValueLabelComponent={ValueLabelComponent}
           onChangeCommitted={(_, value) => {
             attacher[parent && parent.useArray ? index : name] = value;
             setValues({ ...values });
           }}
-          name={name}
-          className={
-            className || 'FormScheme-content-container-component-slider'
-          }
+          {...generated_props}
           {...input_props}
         />
       );
     else if (type === 'checkbox')
       return (
         <Checkbox
-          className={
-            className || 'FormScheme-content-container-component-checkbox'
-          }
           color={'primary'}
           checked={value === true}
-          name={name}
-          onChange={onChange}
-          onBlur={handleBlur}
+          {...generated_props}
           {...input_props}
         />
       );
     else if (type === 'radio')
       return (
-        <RadioGroup
-          row
-          {...generated_props}
-          className={
-            className || 'FormScheme-content-container-component-radio'
-          }
-          {...input_props}
-        >
+        <RadioGroup row {...generated_props} {...input_props}>
           {radioItems.map(({ label, value }, index) => (
             <FormControlLabel
               key={key + label + index}
@@ -166,24 +138,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       return (
         <TextField
           type={'number'}
-          {...generated_props}
           fullWidth
-          className={
-            className || 'FormScheme-content-container-component-number'
-          }
-          {...input_props}
-        />
-      );
-    else if (type === 'textarea')
-      return (
-        <TextField
-          type={'text'}
-          multiline
           {...generated_props}
-          fullWidth
-          className={
-            className || 'FormScheme-content-container-component-textarea'
-          }
           {...input_props}
         />
       );
@@ -191,9 +147,9 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       return (
         <TextField
           type={'text'}
-          {...generated_props}
+          multiline={type === 'textarea'}
           fullWidth
-          className={className || 'FormScheme-content-container-component-text'}
+          {...generated_props}
           {...input_props}
         />
       );

@@ -75,10 +75,7 @@ export function generateFormSchemeInputDefaultConfigs(
 
   if (input.type === 'radio' && (input?.radioItems ?? [])?.length === 0)
     throw new Error('Radio component must have radio items');
-  if (
-    input.type === 'select' &&
-    (input?.selectItems ?? [])?.length === 0
-  )
+  if (input.type === 'select' && (input?.selectItems ?? [])?.length === 0)
     throw new Error('Select component must have select items');
 
   return input as FormSchemeInputFull;
