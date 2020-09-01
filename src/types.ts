@@ -51,6 +51,7 @@ export interface FormSchemeInputFull {
   touched: boolean;
   key: string;
   component: JSX.Element;
+  full_path: string;
 }
 
 export interface FormSchemeInputPartial {

@@ -21,6 +21,7 @@ export function generateFormSchemeInputDefaultConfigs(
   parents: FormSchemeInputFull[] = [],
   index: number | undefined = 0
 ) {
+  const parent = parents[parents.length - 1];
   if (!input.input_props) input.input_props = {};
 
   if (input.type === 'group') {
@@ -71,13 +72,13 @@ export function generateFormSchemeInputDefaultConfigs(
   const full_path = parents
     .reduce((acc, parent) => acc.concat(parent.name), [] as any[])
     .join('.');
-  if (!input.key) input.key = (full_path || '') + input.name + index;
+  if (!input.key) input.key = full_path + input.name + index;
 
   if (input.type === 'radio' && (input?.radioItems ?? [])?.length === 0)
     throw new Error('Radio component must have radio items');
   if (input.type === 'select' && (input?.selectItems ?? [])?.length === 0)
     throw new Error('Select component must have select items');
-
+  (input as FormSchemeInputFull).full_path = full_path + `${parent ? parent.useArray ? `[$${index}]` : `.${input.name}` : input.name}`
   return input as FormSchemeInputFull;
 }
 

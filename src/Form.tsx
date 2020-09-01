@@ -1,4 +1,4 @@
-import React /* , { BaseSyntheticEvent } */ from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -40,8 +40,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       setSubmitting,
       handleChange,
       handleBlur,
-      values,
-      touched,
+      getFieldMeta,
     },
     FORMSCHEME_PROPS: {
       inputs,
@@ -57,12 +56,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     children,
   } = props;
 
-  const renderFormGroupItem = (
-    input: FormSchemeInputFull,
-    attacher: Record<string, any>,
-    parents: FormSchemeInputFull[],
-    index: number
-  ) => {
+  const renderFormGroupItem = (input: FormSchemeInputFull) => {
     const {
       name,
       type,
@@ -76,18 +70,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       controlled,
       onKeyPress,
       className,
+      full_path,
     } = input;
-    const parent = parents[parents.length - 1];
-    const value =
-      parent && parent.useArray
-        ? attacher.values[index]
-        : attacher.values[name];
+    const { value } = getFieldMeta(name);
 
     const common_props: any = {
-      name: parents
-        .reduce((acc, parent) => acc.concat(parent.name), [] as any)
-        .concat(name)
-        .join('.'),
+      name: full_path,
       value,
       onBlur: handleBlur,
       disabled,
@@ -171,12 +159,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       );
   };
 
-  const renderFormGroup = (
-    input: FormSchemeInputFull,
-    attacher: Record<string, any>,
-    parents: FormSchemeInputFull[],
-    index: number
-  ) => {
+  const renderFormGroup = (input: FormSchemeInputFull) => {
     const {
       key,
       children,
@@ -185,7 +168,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       errorText,
       className,
       label,
-      name,
       disabled,
       treeView,
       collapse,
@@ -226,37 +208,17 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             >
               <TreeItem nodeId="1" label={collapse ? 'Expand' : 'Collapse'}>
                 <FormGroup row={false}>
-                  {children.map((child, index) =>
-                    renderFormGroup(
-                      child,
-                      {
-                        values: attacher.values[name],
-                        touched: attacher.touched[name],
-                      },
-                      [...parents, input],
-                      index
-                    )
-                  )}
+                  {children.map(child => renderFormGroup(child))}
                 </FormGroup>
               </TreeItem>
             </TreeView>
           ) : (
             <FormGroup row={true}>
-              {children.map((child, index) =>
-                renderFormGroup(
-                  child,
-                  {
-                    values: attacher.values[name],
-                    touched: attacher.touched[name],
-                  },
-                  [...parents, input],
-                  index
-                )
-              )}
+              {children.map(child => renderFormGroup(child))}
             </FormGroup>
           )
         ) : (
-          renderFormGroupItem(input, attacher, parents, index)
+          renderFormGroupItem(input)
         )}
       </FormControl>
     );
@@ -280,9 +242,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       }}
     >
       <div className={`Formscheme-content`}>
-        {inputs.map((input, index) =>
-          renderFormGroup(input, { values, touched }, [], index)
-        )}
+        {inputs.map(input => renderFormGroup(input))}
         {children}
       </div>
       <div className={`Formscheme-buttons`}>
