@@ -31,6 +31,34 @@ function ValueLabelComponent(props: any) {
 }
 
 function Form(props: FormPropsFull<Record<string, any>>) {
+  const {
+    FORMIK_PROPS: {
+      handleSubmit,
+      isValid,
+      isSubmitting,
+      handleReset,
+      setSubmitting,
+      setTouched,
+      handleBlur,
+      setValues,
+      values,
+      touched,
+    },
+    FORMSCHEME_PROPS: {
+      inputs,
+      submitMsg,
+      resetMsg,
+      formButtons,
+      resetButton,
+      submitButton,
+      classNames,
+      disabled: form_disabled,
+      submitTimeout,
+      customHandler,
+    },
+    children,
+  } = props;
+
   const renderFormGroupItem = (
     input: FormSchemeInputFull,
     attacher: Record<string, any>,
@@ -51,40 +79,39 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       onKeyPress,
       className,
     } = input;
-    const value = parent && parent.useArray ? attacher[index] : attacher[name];
-    let common_props: any = {};
+    const value =
+      parent && parent.useArray
+        ? attacher.values[index]
+        : attacher.values[name];
 
-    const {
-      FORMIK_PROPS: { handleBlur, setValues, values, touched, setTouched },
-      FORMSCHEME_PROPS: { customHandler },
-    } = props;
+    const common_props: any = {
+      name,
+      value,
+      onBlur: handleBlur,
+      disabled,
+      className: className || `FormScheme-content-container-component-${type}`,
+    };
 
     const onChange = (e: BaseSyntheticEvent) => {
       if (e.persist) e.persist();
-      attacher[parent && parent.useArray ? index : e.target.name] =
+      attacher.values[parent && parent.useArray ? index : e.target.name] =
         type !== 'checkbox' ? e.target.value : e.target.checked;
-      setValues({ ...values }, true);
+      setValues(JSON.parse(JSON.stringify(values)), true);
       if (fieldHandler) fieldHandler(e.target.value);
       if (customHandler) customHandler(values, setValues, e);
-      setTouched({ ...touched }, true);
+      attacher.touched[
+        parent && parent.useArray ? index : e.target.name
+      ] = true;
+      setTouched(JSON.parse(JSON.stringify(touched)), true);
     };
 
-    if (controlled)
-      common_props = {
-        name,
-        value,
-        onBlur: handleBlur,
-        disabled,
-        className:
-          className || `FormScheme-content-container-component-${type}`,
-      };
-    else
-      common_props = {
-        name,
-        onKeyPress,
-        onChange: fieldHandler,
-      };
     if (type !== 'slider') common_props.onChange = onChange;
+
+    if (!controlled) {
+      common_props.onKeyPress = onKeyPress;
+      common_props.onChange = fieldHandler;
+    }
+
     if (type === 'component') return component;
     else if (type === 'select')
       return (
@@ -104,7 +131,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         <Slider
           ValueLabelComponent={ValueLabelComponent}
           onChangeCommitted={(_, value) => {
-            attacher[parent && parent.useArray ? index : name] = value;
+            attacher.values[parent && parent.useArray ? index : name] = value;
             setValues({ ...values });
           }}
           {...common_props}
@@ -179,7 +206,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         component="fieldset"
         className={className || `FormScheme-content-container`}
         key={key}
-        disabled={disabled || false}
+        disabled={disabled}
       >
         <FormLabel component="legend">{label}</FormLabel>
         {helperText && (
@@ -211,7 +238,15 @@ function Form(props: FormPropsFull<Record<string, any>>) {
               <TreeItem nodeId="1" label={collapse ? 'Expand' : 'Collapse'}>
                 <FormGroup row={false}>
                   {children.map((child, index) =>
-                    renderFormGroup(child, attacher[name], input, index)
+                    renderFormGroup(
+                      child,
+                      {
+                        values: attacher.values[name],
+                        touched: attacher.touched[name],
+                      },
+                      input,
+                      index
+                    )
                   )}
                 </FormGroup>
               </TreeItem>
@@ -219,7 +254,15 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           ) : (
             <FormGroup row={true}>
               {children.map((child, index) =>
-                renderFormGroup(child, attacher[name], input, index)
+                renderFormGroup(
+                  child,
+                  {
+                    values: attacher.values[name],
+                    touched: attacher.touched[name],
+                  },
+                  input,
+                  index
+                )
               )}
             </FormGroup>
           )
@@ -230,28 +273,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     );
   };
 
-  const {
-    FORMIK_PROPS: {
-      handleSubmit,
-      isValid,
-      isSubmitting,
-      handleReset,
-      values,
-      setSubmitting,
-    },
-    FORMSCHEME_PROPS: {
-      inputs,
-      submitMsg,
-      resetMsg,
-      formButtons,
-      resetButton,
-      submitButton,
-      classNames,
-      disabled,
-      submitTimeout,
-    },
-    children,
-  } = props;
   return (
     <form
       className={classNames || `Formscheme`}
@@ -271,7 +292,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     >
       <div className={`Formscheme-content`}>
         {inputs.map((input, index) =>
-          renderFormGroup(input, values, undefined, index)
+          renderFormGroup(input, { values, touched }, undefined, index)
         )}
         {children}
       </div>
@@ -283,7 +304,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                 variant="contained"
                 color="default"
                 type="reset"
-                disabled={disabled}
+                disabled={form_disabled}
                 className={'Formscheme-buttons-reset'}
               >
                 {resetMsg}
@@ -295,7 +316,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={isSubmitting || !isValid || disabled}
+                disabled={isSubmitting || !isValid || form_disabled}
               >
                 {submitMsg}
               </Button>

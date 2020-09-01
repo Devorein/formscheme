@@ -96,7 +96,6 @@ export function generateFormSchemePropsDefaultConfigs(
     'customHandler',
     ['formButtons', true],
     'classNames',
-    'children',
     ['passFormAsProp', true],
     ['errorBeforeTouched', true],
     ['submitMsg', 'submit'],

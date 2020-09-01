@@ -113,7 +113,6 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
 
   const {
     FORMSCHEME_PROPS: { passFormAsProp },
-    children,
     FORMIK_CONFIGS,
   } = GeneratedFormSchemeProps;
   const { initialValues, initialErrors, initialTouched } = populateInitialValue(
@@ -123,7 +122,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   FORMIK_CONFIGS.initialErrors = initialErrors;
   FORMIK_CONFIGS.initialTouched = initialTouched;
   FORMIK_CONFIGS.validationSchema = validationSchema;
-
+  const { children } = props;
   return (
     <Formik {...FORMIK_CONFIGS}>
       {formik_props => {
@@ -132,7 +131,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         );
         return (
           <Fragment>
-            {passFormAsProp ? null : FORM}
+            {passFormAsProp && FORM}
             {typeof children === 'function'
               ? children({
                   FORMIK_PROPS: formik_props,
