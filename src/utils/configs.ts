@@ -101,6 +101,8 @@ export function generateFormSchemePropsDefaultConfigs(
     ['errorBeforeTouched', true],
     ['submitMsg', 'submit'],
     ['resetMsg', 'reset'],
+    ['resetButton', true],
+    ['submitButton', true],
     ['disabled', false],
     ['required', true],
     'submitTimeout',

@@ -98,7 +98,9 @@ export interface FormSchemePropsPartial<Values> {
     classNames?: string;
     errorBeforeTouched?: boolean;
     submitMsg?: string;
+    submitButton?: true;
     resetMsg?: string;
+    resetButton?: true;
     passFormAsProp?: boolean;
     disabled?: boolean;
     submitTimeout?: number;
@@ -111,20 +113,22 @@ export interface FormSchemePropsFull<Values> {
   FORMSCHEME_PROPS: {
     inputs: FormSchemeInputsFull;
     customHandler:
-      | undefined
-      | ((
-          values: Record<string, any>,
-          setValues: (
-            values: Record<string, any>,
-            shouldValidate?: boolean | undefined
-          ) => void,
-          e: BaseSyntheticEvent
-        ) => any);
+    | undefined
+    | ((
+      values: Record<string, any>,
+      setValues: (
+        values: Record<string, any>,
+        shouldValidate?: boolean | undefined
+      ) => void,
+      e: BaseSyntheticEvent
+    ) => any);
     formButtons: boolean;
     classNames: undefined | string;
     errorBeforeTouched: boolean;
     submitMsg: string;
     resetMsg: string;
+    submitButton: true;
+    resetButton: true;
     passFormAsProp: boolean;
     disabled: boolean;
     submitTimeout: undefined | number;

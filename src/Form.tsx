@@ -52,7 +52,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       className,
     } = input;
     const value = parent && parent.useArray ? attacher[index] : attacher[name];
-    let generated_props = null;
+    let common_props: any = {};
 
     const {
       FORMIK_PROPS: { handleBlur, setValues, values, touched, setTouched },
@@ -70,7 +70,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     };
 
     if (controlled)
-      generated_props = {
+      common_props = {
         name,
         value,
         onBlur: handleBlur,
@@ -79,16 +79,16 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           className || `FormScheme-content-container-component-${type}`,
       };
     else
-      generated_props = {
+      common_props = {
         name,
         onKeyPress,
         onChange: fieldHandler,
       };
-    if (type !== 'slider') generated_props.onChange = onChange;
+    if (type !== 'slider') common_props.onChange = onChange;
     if (type === 'component') return component;
     else if (type === 'select')
       return (
-        <Select {...generated_props} {...input_props}>
+        <Select {...common_props} {...input_props}>
           {selectItems.map(({ value, label, icon }, index) => {
             return (
               <MenuItem key={key + label + index} value={value}>
@@ -107,7 +107,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             attacher[parent && parent.useArray ? index : name] = value;
             setValues({ ...values });
           }}
-          {...generated_props}
+          {...common_props}
           {...input_props}
         />
       );
@@ -116,13 +116,13 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         <Checkbox
           color={'primary'}
           checked={value === true}
-          {...generated_props}
+          {...common_props}
           {...input_props}
         />
       );
     else if (type === 'radio')
       return (
-        <RadioGroup row {...generated_props} {...input_props}>
+        <RadioGroup row {...common_props} {...input_props}>
           {radioItems.map(({ label, value }, index) => (
             <FormControlLabel
               key={key + label + index}
@@ -139,7 +139,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         <TextField
           type={'number'}
           fullWidth
-          {...generated_props}
+          {...common_props}
           {...input_props}
         />
       );
@@ -149,7 +149,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           type={'text'}
           multiline={type === 'textarea'}
           fullWidth
-          {...generated_props}
+          {...common_props}
           {...input_props}
         />
       );
@@ -244,6 +244,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       submitMsg,
       resetMsg,
       formButtons,
+      resetButton,
+      submitButton,
       classNames,
       disabled,
       submitTimeout,
@@ -274,28 +276,32 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         {children}
       </div>
       <div className={`Formscheme-buttons`}>
-        {formButtons ? (
+        {formButtons && (
           <FormGroup row={true}>
-            <Button
-              variant="contained"
-              color="default"
-              type="reset"
-              disabled={disabled}
-              className={'Formscheme-buttons-reset'}
-            >
-              {resetMsg}
-            </Button>
-            <Button
-              className={'Formscheme-buttons-submit'}
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSubmitting || !isValid || disabled}
-            >
-              {submitMsg}
-            </Button>
+            {resetButton && (
+              <Button
+                variant="contained"
+                color="default"
+                type="reset"
+                disabled={disabled}
+                className={'Formscheme-buttons-reset'}
+              >
+                {resetMsg}
+              </Button>
+            )}
+            {submitButton && (
+              <Button
+                className={'Formscheme-buttons-submit'}
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting || !isValid || disabled}
+              >
+                {submitMsg}
+              </Button>
+            )}
           </FormGroup>
-        ) : null}
+        )}
       </div>
     </form>
   );
