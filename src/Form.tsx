@@ -88,75 +88,77 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       common_props.onKeyPress = onKeyPress;
       common_props.onChange = fieldHandler;
     }
-
-    if (type === 'component') return component;
-    else if (type === 'select')
-      return (
-        <Select {...common_props} {...input_props}>
-          {selectItems.map(({ value, label, icon }, index) => {
-            return (
-              <MenuItem key={key + label + index} value={value}>
-                {icon ? <Icon>{icon}</Icon> : null}
-                {label}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      );
-    else if (type === 'slider')
-      return (
-        <Slider
-          ValueLabelComponent={ValueLabelComponent}
-          onChangeCommitted={(e, value) => {
-            (e.target as any).value = value;
-            handleChange(e);
-          }}
-          {...common_props}
-          {...input_props}
-        />
-      );
-    else if (type === 'checkbox')
-      return (
-        <Checkbox
-          color={'primary'}
-          checked={value === true}
-          {...common_props}
-          {...input_props}
-        />
-      );
-    else if (type === 'radio')
-      return (
-        <RadioGroup row {...common_props} {...input_props}>
-          {radioItems.map(({ label, value }, index) => (
-            <FormControlLabel
-              key={key + label + index}
-              control={<Radio color="primary" />}
-              value={value}
-              label={label}
-              labelPlacement="end"
-            />
-          ))}
-        </RadioGroup>
-      );
-    else if (type === 'number')
-      return (
-        <TextField
-          type={'number'}
-          fullWidth
-          {...common_props}
-          {...input_props}
-        />
-      );
-    else
-      return (
-        <TextField
-          type={'text'}
-          multiline={type === 'textarea'}
-          fullWidth
-          {...common_props}
-          {...input_props}
-        />
-      );
+    switch (type) {
+      case 'component':
+        return component;
+      case 'select':
+        return (
+          <Select {...common_props} {...input_props}>
+            {selectItems.map(({ value, label, icon }, index) => {
+              return (
+                <MenuItem key={key + label + index} value={value}>
+                  {icon ? <Icon>{icon}</Icon> : null}
+                  {label}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        );
+      case 'slider':
+        return (
+          <Slider
+            ValueLabelComponent={ValueLabelComponent}
+            onChangeCommitted={(e, value) => {
+              (e.target as any).value = value;
+              handleChange(e);
+            }}
+            {...common_props}
+            {...input_props}
+          />
+        );
+      case 'checkbox':
+        return (
+          <Checkbox
+            color={'primary'}
+            checked={value === true}
+            {...common_props}
+            {...input_props}
+          />
+        );
+      case 'radio':
+        return (
+          <RadioGroup row {...common_props} {...input_props}>
+            {radioItems.map(({ label, value }, index) => (
+              <FormControlLabel
+                key={key + label + index}
+                control={<Radio color="primary" />}
+                value={value}
+                label={label}
+                labelPlacement="end"
+              />
+            ))}
+          </RadioGroup>
+        );
+      case 'number':
+        return (
+          <TextField
+            type={'number'}
+            fullWidth
+            {...common_props}
+            {...input_props}
+          />
+        );
+      default:
+        return (
+          <TextField
+            type={'text'}
+            multiline={type === 'textarea'}
+            fullWidth
+            {...common_props}
+            {...input_props}
+          />
+        );
+    }
   };
 
   const renderFormGroup = (input: FormSchemeInputFull) => {
