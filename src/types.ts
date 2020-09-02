@@ -11,7 +11,8 @@ export type FormElementType =
   | 'number'
   | 'component'
   | 'slider'
-  | 'textarea';
+  | 'textarea'
+  | "switch"
 
 export interface SelectItems {
   value: any;

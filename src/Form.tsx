@@ -32,6 +32,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
   const {
     FORMIK_PROPS: {
       handleSubmit,
+      dirty,
       isValid,
       isSubmitting,
       handleReset,
@@ -51,7 +52,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       disabled: form_disabled,
       submitTimeout,
       treeViewCollapseIcon,
-      treeViewExpandIcon
+      treeViewExpandIcon,
     },
     children,
   } = props;
@@ -161,7 +162,10 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     }
   };
 
-  const renderFormGroup = (input: FormSchemeInputFull) => {
+  const renderFormGroup = (
+    input: FormSchemeInputFull,
+    parent: undefined | FormSchemeInputFull
+  ) => {
     const {
       key,
       children,
@@ -170,29 +174,30 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       errorText,
       className,
       label,
-      disabled,
       treeView,
       collapse,
+      required,
     } = input;
+    input.disabled = parent?.disabled || input.disabled;
+    const { disabled } = input;
     return (
       <FormControl
-        component="fieldset"
         className={className || `FormScheme-content-container`}
         key={key}
         disabled={disabled}
+        fullWidth
+        margin={'normal'}
       >
-        <FormLabel component="legend">{label}</FormLabel>
+        <FormLabel disabled={disabled} required={required} component="label">
+          {label}
+        </FormLabel>
         {helperText && (
-          <FormHelperText className={'FormScheme-content-container-helpertext'}>
-            {helperText}
-          </FormHelperText>
-        )}
-        {errorText && (
           <FormHelperText
-            className={'FormScheme-content-container-errorText'}
-            error={true}
+            required={required}
+            disabled={disabled}
+            className={'FormScheme-content-container-helpertext'}
           >
-            {errorText}
+            {helperText}
           </FormHelperText>
         )}
         {type === 'group' ? (
@@ -210,17 +215,27 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             >
               <TreeItem nodeId="1" label={collapse ? 'Expand' : 'Collapse'}>
                 <FormGroup row={false}>
-                  {children.map(child => renderFormGroup(child))}
+                  {children.map(child => renderFormGroup(child, input))}
                 </FormGroup>
               </TreeItem>
             </TreeView>
           ) : (
             <FormGroup row={true}>
-              {children.map(child => renderFormGroup(child))}
+              {children.map(child => renderFormGroup(child, input))}
             </FormGroup>
           )
         ) : (
           renderFormGroupItem(input)
+        )}
+        {errorText && (
+          <FormHelperText
+            className={'FormScheme-content-container-errorText'}
+            error={true}
+            required={required}
+            disabled={disabled}
+          >
+            {errorText}
+          </FormHelperText>
         )}
       </FormControl>
     );
@@ -244,7 +259,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       }}
     >
       <div className={`Formscheme-content`}>
-        {inputs.map(input => renderFormGroup(input))}
+        {inputs.map(input => renderFormGroup(input, undefined))}
         {children}
       </div>
       <div className={`Formscheme-buttons`}>
@@ -267,7 +282,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={isSubmitting || !isValid || form_disabled}
+                disabled={!dirty || isSubmitting || !isValid || form_disabled}
               >
                 {submitMsg}
               </Button>

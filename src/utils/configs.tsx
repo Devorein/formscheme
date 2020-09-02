@@ -4,7 +4,7 @@ import {
   FormSchemePropsPartial,
   FormSchemePropsFull,
 } from '../types';
-import React from "react";
+import React from 'react';
 
 function setObjectValues(
   parent: any,
@@ -60,6 +60,7 @@ export function generateFormSchemeInputDefaultConfigs(
     'fieldHandler',
     ['siblings', []],
     ['touched', false],
+    ['required', false],
     ['selectItems', []],
     ['radioItems', []],
   ]);
@@ -106,10 +107,9 @@ export function generateFormSchemePropsDefaultConfigs(
     ['resetButton', true],
     ['submitButton', true],
     ['disabled', false],
-    ['required', true],
     'submitTimeout',
-    ['treeViewExpandIcon',<div>{"⯆"}</div>],
-    ['treeViewCollapseIcon',<div>{"▶"}</div>]
+    ['treeViewExpandIcon', <div>{'⯆'}</div>],
+    ['treeViewCollapseIcon', <div>{'▶'}</div>],
   ]);
   return res as FormSchemePropsFull<Record<string, any>>;
 }
