@@ -14,7 +14,7 @@ export type FormElementType =
   | 'textarea'
   | 'switch';
 
-export type placement = "center" | "flex-start" | "flex-end";
+export type placement = 'center' | 'flex-start' | 'flex-end';
 
 export interface SelectItems {
   value: any;
@@ -55,6 +55,8 @@ export interface FormSchemeInputFull {
   component: JSX.Element;
   full_path: string;
   labelPlacement: placement;
+  helperTextPlacement: placement;
+  errorTextPlacement: placement;
 }
 
 export interface FormSchemeInputPartial {
@@ -84,6 +86,8 @@ export interface FormSchemeInputPartial {
   key?: string;
   component?: JSX.Element;
   labelPlacement?: placement;
+  helperTextPlacement?: placement;
+  errorTextPlacement?: placement;
 }
 
 export type FormSchemeInputsPartial = FormSchemeInputPartial[];

@@ -189,6 +189,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       treeView,
       collapse,
       labelPlacement,
+      helperTextPlacement,
+      // errorTextPlacement,
       // full_path
     } = input;
     input.disabled = parent?.disabled || input.disabled;
@@ -206,7 +208,17 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         fullWidth
         margin={'normal'}
       >
-        <FormLabel style={{display:"flex",fontWeight: "bold", fontSize:"1.2rem",justifyContent: labelPlacement}} disabled={disabled} required={required} component="label">
+        <FormLabel
+          style={{
+            display: 'flex',
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            justifyContent: labelPlacement,
+          }}
+          disabled={disabled}
+          required={required}
+          component="label"
+        >
           {label}
         </FormLabel>
         {helperText && (
@@ -214,6 +226,11 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             required={required}
             disabled={disabled}
             className={'FormScheme-content-container-helpertext'}
+            style={{
+              display: 'flex',
+              fontSize: '1rem',
+              justifyContent: helperTextPlacement,
+            }}
           >
             {helperText}
           </FormHelperText>
@@ -225,13 +242,20 @@ function Form(props: FormPropsFull<Record<string, any>>) {
               defaultExpandIcon={treeViewExpandIcon}
               defaultExpanded={[collapse ? '0' : '1']}
               onNodeToggle={e => {
-                const parent = (e.target as any).parentElement;
-                parent.lastElementChild.textContent = !parent.nextElementSibling
+                const parent = (e.target as any).parentElement.parentElement;
+                (e.target as any).textContent = !parent.nextElementSibling
                   ? 'Collapse'
                   : 'Expand';
               }}
             >
-              <TreeItem nodeId="1" label={collapse ? 'Expand' : 'Collapse'}>
+              <TreeItem
+                nodeId="1"
+                label={
+                  <div style={{ width: 'calc(100% - 25px)' }}>
+                    {collapse ? 'Expand' : 'Collapse'}
+                  </div>
+                }
+              >
                 <FormGroup row={false}>
                   {children.map(child => renderFormGroup(child, input))}
                 </FormGroup>
@@ -245,7 +269,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         ) : (
           renderFormGroupItem(input)
         )}
-{/*         {error && (
+        {/*         {error && (
           <FormHelperText
             className={'FormScheme-content-container-errorText'}
             error={true}

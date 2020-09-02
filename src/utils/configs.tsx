@@ -47,7 +47,7 @@ export function generateFormSchemeInputDefaultConfigs(
   }
 
   if (!input.name) throw new Error('Input name is required');
-
+  const placemant = input.type !== 'group' ? 'flex-start' : 'center';
   setObjectValues(input, [
     ['disabled', false],
     'className',
@@ -63,7 +63,9 @@ export function generateFormSchemeInputDefaultConfigs(
     ['required', false],
     ['selectItems', []],
     ['radioItems', []],
-    ['labelPlacement', input.type!=="group" ? "flex-start" : "center"],
+    ['labelPlacement', placemant],
+    ['helperTextPlacement', placemant],
+    ['errorTextPlacement', placemant],
   ]);
 
   if (!input.label)
