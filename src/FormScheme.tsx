@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
 import { Formik } from 'formik';
-import { ObjectSchema } from 'yup';
+import * as Yup from 'yup';
 
-import generateYupSchema from './Yupschema';
 import Form from './Form';
 import {
   FormSchemePropsPartial,
@@ -15,9 +14,8 @@ import {
 } from './utils/configs';
 
 function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
-  const populateInitialValue = (
-    validationSchema: ObjectSchema<Record<string, any> | undefined>
-  ) => {
+  const populateInitialValue = () => {
+    const validationSchemaShape = {};
     const { inputs } = props.FORMSCHEME_PROPS;
     const initialValues: Record<string, any> = {};
     const initialErrors: Record<string, any> = {};
@@ -73,19 +71,6 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
           defaultValue || (is_number ? 0 : '');
         attacher.touched[isArray ? index : name] = touched;
         full_path += name;
-        try {
-          validationSchema.validateSyncAt(
-            defaultValue,
-            isArray ? attacher.values[index] : attacher.values[name],
-            {
-              abortEarly: true,
-            }
-          );
-        } catch (err) {
-          isArray
-            ? attacher.errors.push(err.message)
-            : (attacher.errors[name] = err.message);
-        }
       }
     }
     inputs.forEach((input, index) =>
@@ -102,20 +87,23 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
       )
     );
 
-    return { initialValues, initialErrors, initialTouched };
+    return {
+      initialValues,
+      initialErrors,
+      initialTouched,
+      validationSchema: Yup.object(validationSchemaShape),
+    };
   };
-
-  const validationSchema = generateYupSchema(props.FORMSCHEME_PROPS.inputs);
 
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
 
+  const { FORMIK_CONFIGS } = GeneratedFormSchemeProps;
   const {
-    FORMSCHEME_PROPS: { passFormAsProp },
-    FORMIK_CONFIGS,
-  } = GeneratedFormSchemeProps;
-  const { initialValues, initialErrors, initialTouched } = populateInitialValue(
-    validationSchema
-  );
+    initialValues,
+    initialErrors,
+    initialTouched,
+    validationSchema,
+  } = populateInitialValue();
 
   FORMIK_CONFIGS.initialValues = initialValues;
   FORMIK_CONFIGS.initialErrors = initialErrors;
@@ -130,14 +118,18 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         );
         return (
           <Fragment>
-            {!passFormAsProp && FORM}
-            {typeof children === 'function'
-              ? children({
-                  FORMIK_PROPS: formik_props,
-                  ...GeneratedFormSchemeProps,
-                  FORM: passFormAsProp ? FORM : null,
-                })
-              : children}
+            {typeof children === 'function' ? (
+              children({
+                FORMIK_PROPS: formik_props,
+                ...GeneratedFormSchemeProps,
+                FORM,
+              })
+            ) : (
+              <Fragment>
+                {FORM}
+                {children}
+              </Fragment>
+            )}
           </Fragment>
         );
       }}

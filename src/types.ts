@@ -104,7 +104,6 @@ export interface FormSchemePropsPartial<Values> {
     submitButton?: true;
     resetMsg?: string;
     resetButton?: true;
-    passFormAsProp?: boolean;
     disabled?: boolean;
     submitTimeout?: number;
     treeViewExpandIcon?: JSX.Element;
@@ -125,7 +124,6 @@ export interface FormSchemePropsFull<Values> {
     resetMsg: string;
     submitButton: true;
     resetButton: true;
-    passFormAsProp: boolean;
     disabled: boolean;
     submitTimeout: undefined | number;
     treeViewExpandIcon: JSX.Element;

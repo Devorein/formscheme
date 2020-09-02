@@ -103,7 +103,6 @@ export function generateFormSchemePropsDefaultConfigs(
   setObjectValues(res.FORMSCHEME_PROPS, [
     ['formButtons', true],
     'classNames',
-    ['passFormAsProp', true],
     ['errorBeforeTouched', true],
     ['submitMsg', 'submit'],
     ['resetMsg', 'reset'],
