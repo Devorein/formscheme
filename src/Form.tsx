@@ -61,7 +61,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
 
   const renderFormGroupItem = (input: FormSchemeInputFull) => {
     const {
-      name,
       type,
       disabled,
       fieldHandler,
@@ -75,7 +74,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       className,
       full_path,
     } = input;
-    const { value } = getFieldMeta(name);
+    const { value } = getFieldMeta(full_path);
 
     const common_props: any = {
       name: full_path,
@@ -185,15 +184,18 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       children,
       type,
       helperText,
-      errorText,
       className,
       label,
       treeView,
       collapse,
+      labelPlacement,
+      // full_path
     } = input;
     input.disabled = parent?.disabled || input.disabled;
     input.required = parent?.required || input.required;
     const { disabled, required } = input;
+    // const { error } = getFieldMeta(full_path);
+
     if (disabled && required)
       throw new Error('Required fields cannot be disabled');
     return (
@@ -204,7 +206,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         fullWidth
         margin={'normal'}
       >
-        <FormLabel disabled={disabled} required={required} component="label">
+        <FormLabel style={{display:"flex",fontWeight: "bold", fontSize:"1.2rem",justifyContent: labelPlacement}} disabled={disabled} required={required} component="label">
           {label}
         </FormLabel>
         {helperText && (
@@ -243,16 +245,15 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         ) : (
           renderFormGroupItem(input)
         )}
-        {errorText && (
+{/*         {error && (
           <FormHelperText
             className={'FormScheme-content-container-errorText'}
             error={true}
-            required={required}
             disabled={disabled}
           >
-            {errorText}
+            {error}
           </FormHelperText>
-        )}
+        )} */}
       </FormControl>
     );
   };

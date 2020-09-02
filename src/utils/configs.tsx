@@ -63,6 +63,7 @@ export function generateFormSchemeInputDefaultConfigs(
     ['required', false],
     ['selectItems', []],
     ['radioItems', []],
+    ['labelPlacement', input.type!=="group" ? "flex-start" : "center"],
   ]);
 
   if (!input.label)
