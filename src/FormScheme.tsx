@@ -15,17 +15,19 @@ import {
 
 function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   const populateInitialValue = () => {
-    const validationSchemaShape = {};
     const { inputs } = props.FORMSCHEME_PROPS;
     const initialValues: Record<string, any> = {};
     const initialErrors: Record<string, any> = {};
     const initialTouched: Record<string, any> = {};
+    const initialValidationSchemaShape: any = {};
+
     const types = ['values', 'errors', 'touched'];
     function inner(
       input: FormSchemeInputPartial,
       attacher: Record<string, any>,
       full_path: string = '',
       parent: undefined | FormSchemeInputFull,
+      schemaShape: any,
       index: number
     ) {
       const GeneratedFormSchemeInputConfigs = generateFormSchemeInputDefaultConfigs(
@@ -42,11 +44,16 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         touched,
         defaultValue,
         useArray,
+        required,
+        label,
+        error,
       } = GeneratedFormSchemeInputConfigs;
       if (type === 'group') {
+        const shape = {};
         types.forEach(
           type => (attacher[type][isArray ? index : name] = useArray ? [] : {})
         );
+        schemaShape[name] = Yup.object();
         full_path += `${
           isArray ? `[${index}]` : `${full_path ? `.${name}` : name}`
         }`;
@@ -62,14 +69,26 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
             ),
             full_path,
             GeneratedFormSchemeInputConfigs,
+            shape,
             _index
           )
         );
+        schemaShape[name] = schemaShape[name].shape(shape);
       } else {
         const is_number = type.match(/(slider|number)/);
+        const is_text = type.match(/(textarea|text|select)/);
+        const is_bool = type.match(/(radio|checkbox|switch)/);
+        if (is_number) schemaShape[name] = Yup.number();
+        else if (is_text) schemaShape[name] = Yup.string();
+        else if (is_bool) schemaShape[name] = Yup.bool();
+        if (required)
+          schemaShape[name] = schemaShape[name].required(
+            `${label} is a required field`
+          );
         attacher.values[isArray ? index : name] =
           defaultValue || (is_number ? 0 : '');
         attacher.touched[isArray ? index : name] = touched;
+        attacher.errors[isArray ? index : name] = error;
         full_path += name;
       }
     }
@@ -83,20 +102,19 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         },
         '',
         undefined,
+        initialValidationSchemaShape,
         index
       )
     );
-
     return {
       initialValues,
       initialErrors,
       initialTouched,
-      validationSchema: Yup.object(validationSchemaShape),
+      validationSchema: Yup.object(initialValidationSchemaShape),
     };
   };
 
   const GeneratedFormSchemeProps = generateFormSchemePropsDefaultConfigs(props);
-
   const { FORMIK_CONFIGS } = GeneratedFormSchemeProps;
   const {
     initialValues,

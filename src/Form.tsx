@@ -176,10 +176,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     }
   };
 
-  const renderFormGroup = (
-    input: FormSchemeInputFull,
-    parent: undefined | FormSchemeInputFull
-  ) => {
+  const renderFormGroup = (input: FormSchemeInputFull) => {
     const {
       key,
       children,
@@ -191,13 +188,11 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       collapse,
       labelPlacement,
       helperTextPlacement,
-      // errorTextPlacement,
-      // full_path
+      errorTextPlacement,
+      full_path,
     } = input;
-    input.disabled = parent?.disabled || input.disabled;
-    input.required = parent?.required || input.required;
     const { disabled, required } = input;
-    // const { error } = getFieldMeta(full_path);
+    const { error, touched } = getFieldMeta(full_path);
 
     if (disabled && required)
       throw new Error('Required fields cannot be disabled');
@@ -258,27 +253,33 @@ function Form(props: FormPropsFull<Record<string, any>>) {
                 }
               >
                 <FormGroup row={false}>
-                  {children.map(child => renderFormGroup(child, input))}
+                  {children.map(child => renderFormGroup(child))}
                 </FormGroup>
               </TreeItem>
             </TreeView>
           ) : (
             <FormGroup row={true}>
-              {children.map(child => renderFormGroup(child, input))}
+              {children.map(child => renderFormGroup(child))}
             </FormGroup>
           )
         ) : (
           renderFormGroupItem(input)
         )}
-        {/*         {error && (
+        {type !== 'group' && error && touched && (
           <FormHelperText
             className={'FormScheme-content-container-errorText'}
             error={true}
             disabled={disabled}
+            style={{
+              display: 'flex',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              justifyContent: errorTextPlacement,
+            }}
           >
             {error}
           </FormHelperText>
-        )} */}
+        )}
       </FormControl>
     );
   };
@@ -301,7 +302,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       }}
     >
       <div className={`Formscheme-content`}>
-        {inputs.map(input => renderFormGroup(input, undefined))}
+        {inputs.map(input => renderFormGroup(input))}
         {children}
       </div>
       <div className={`Formscheme-buttons`}>

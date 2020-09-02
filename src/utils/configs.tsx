@@ -61,12 +61,16 @@ export function generateFormSchemeInputDefaultConfigs(
     ['siblings', []],
     ['touched', false],
     ['required', false],
+    ['error', false],
     ['selectItems', []],
     ['radioItems', []],
     ['labelPlacement', placemant],
     ['helperTextPlacement', placemant],
     ['errorTextPlacement', placemant],
   ]);
+
+  input.disabled = parent?.disabled || input.disabled;
+  input.required = parent?.required || input.required;
 
   if (!input.label)
     input.label = input.name
