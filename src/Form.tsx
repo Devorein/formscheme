@@ -9,6 +9,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
+import Switch from '@material-ui/core/Switch';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormGroup from '@material-ui/core/FormGroup';
 import Icon from '@material-ui/core/Icon';
@@ -18,6 +19,7 @@ import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 
 import { FormPropsFull, FormSchemeInputFull } from './types';
+import { Field } from 'formik';
 
 function ValueLabelComponent(props: any) {
   const { children, open, value } = props;
@@ -119,10 +121,21 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         );
       case 'checkbox':
         return (
-          <Checkbox
+          <Field
+            as={Checkbox}
+            name={full_path}
+            type={'checkbox'}
             color={'primary'}
-            checked={value === true}
-            {...common_props}
+            {...input_props}
+          />
+        );
+      case 'switch':
+        return (
+          <Field
+            as={Switch}
+            name={full_path}
+            type={'checkbox'}
+            color={'primary'}
             {...input_props}
           />
         );
@@ -149,6 +162,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             {...input_props}
           />
         );
+
       default:
         return (
           <TextField
@@ -176,10 +190,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       label,
       treeView,
       collapse,
-      required,
     } = input;
     input.disabled = parent?.disabled || input.disabled;
-    const { disabled } = input;
+    input.required = parent?.required || input.required;
+    const { disabled, required } = input;
+    if (disabled && required)
+      throw new Error('Required fields cannot be disabled');
     return (
       <FormControl
         className={className || `FormScheme-content-container`}

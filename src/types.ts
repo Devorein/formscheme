@@ -12,7 +12,7 @@ export type FormElementType =
   | 'component'
   | 'slider'
   | 'textarea'
-  | "switch"
+  | 'switch';
 
 export interface SelectItems {
   value: any;
