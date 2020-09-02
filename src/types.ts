@@ -100,6 +100,8 @@ export interface FormSchemePropsPartial<Values> {
     passFormAsProp?: boolean;
     disabled?: boolean;
     submitTimeout?: number;
+    treeViewExpandIcon?: JSX.Element;
+    treeViewCollapseIcon?: JSX.Element;
   };
   children?: ReactNode | ((props: any) => ReactElement<any> | null);
 }
@@ -118,6 +120,8 @@ export interface FormSchemePropsFull<Values> {
     passFormAsProp: boolean;
     disabled: boolean;
     submitTimeout: undefined | number;
+    treeViewExpandIcon: JSX.Element;
+    treeViewCollapseIcon: JSX.Element;
   };
   children: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
 }

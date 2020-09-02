@@ -130,7 +130,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         );
         return (
           <Fragment>
-            {passFormAsProp && FORM}
+            {!passFormAsProp && FORM}
             {typeof children === 'function'
               ? children({
                   FORMIK_PROPS: formik_props,

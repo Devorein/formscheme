@@ -4,6 +4,7 @@ import {
   FormSchemePropsPartial,
   FormSchemePropsFull,
 } from '../types';
+import React from "react";
 
 function setObjectValues(
   parent: any,
@@ -107,6 +108,8 @@ export function generateFormSchemePropsDefaultConfigs(
     ['disabled', false],
     ['required', true],
     'submitTimeout',
+    ['treeViewExpandIcon',<div>{"⯆"}</div>],
+    ['treeViewCollapseIcon',<div>{"▶"}</div>]
   ]);
   return res as FormSchemePropsFull<Record<string, any>>;
 }

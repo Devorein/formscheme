@@ -14,8 +14,6 @@ import FormGroup from '@material-ui/core/FormGroup';
 import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
 import Slider from '@material-ui/core/Slider';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 
@@ -52,6 +50,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       classNames,
       disabled: form_disabled,
       submitTimeout,
+      treeViewCollapseIcon,
+      treeViewExpandIcon
     },
     children,
   } = props;
@@ -198,8 +198,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         {type === 'group' ? (
           treeView ? (
             <TreeView
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
+              defaultCollapseIcon={treeViewCollapseIcon}
+              defaultExpandIcon={treeViewExpandIcon}
               defaultExpanded={[collapse ? '0' : '1']}
               onNodeToggle={e => {
                 const parent = (e.target as any).parentElement;
