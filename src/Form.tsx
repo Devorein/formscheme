@@ -55,6 +55,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       submitTimeout,
       treeViewCollapseIcon,
       treeViewExpandIcon,
+      centerButtons,
     },
     children,
   } = props;
@@ -305,9 +306,15 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       </div>
       <div className={`Formscheme-buttons`}>
         {formButtons && (
-          <FormGroup row={true}>
+          <FormGroup
+            row={true}
+            style={
+              centerButtons ? { width: 'fit-content', margin: '0 auto' } : {}
+            }
+          >
             {resetButton && (
               <Button
+                style={{ margin: '10px' }}
                 variant="contained"
                 color="default"
                 type="reset"
@@ -319,6 +326,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             )}
             {submitButton && (
               <Button
+                style={{ margin: '10px' }}
                 className={'Formscheme-buttons-submit'}
                 type="submit"
                 variant="contained"

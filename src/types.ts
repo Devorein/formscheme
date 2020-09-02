@@ -109,6 +109,7 @@ export interface FormSchemePropsPartial<Values> {
     submitTimeout?: number;
     treeViewExpandIcon?: JSX.Element;
     treeViewCollapseIcon?: JSX.Element;
+    centerButtons?: boolean;
   };
   children?: ReactNode | ((props: any) => ReactElement<any> | null);
 }
@@ -129,6 +130,7 @@ export interface FormSchemePropsFull<Values> {
     submitTimeout: undefined | number;
     treeViewExpandIcon: JSX.Element;
     treeViewCollapseIcon: JSX.Element;
+    centerButtons: boolean;
   };
   children: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
 }
