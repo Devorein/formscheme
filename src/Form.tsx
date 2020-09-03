@@ -85,7 +85,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       className: className || `FormScheme-input-container-${type}`,
     };
 
-    if (type !== 'slider') common_props.onChange = handleChange;
+    if (!type.match(/^(slider)$/)) common_props.onChange = handleChange;
 
     if (!controlled) {
       common_props.onKeyPress = onKeyPress;
@@ -100,25 +100,24 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         return component;
       case 'select':
         return (
-          <Select {...common_props} {...input_props}>
-            {items.map(({ value, label, icon }, index) => {
-              return (
-                <MenuItem key={key + label + index} value={value}>
-                  {icon ? <Icon>{icon}</Icon> : null}
-                  {label}
-                </MenuItem>
-              );
-            })}
+          <Select displayEmpty {...common_props} {...input_props}>
+            <MenuItem value="">{'None'}</MenuItem>
+            {items.map(({ value, label, icon }, index) => (
+              <MenuItem key={key + label + index} value={value}>
+                {icon ? <Icon>{icon}</Icon> : null}
+                {label}
+              </MenuItem>
+            ))}
           </Select>
         );
       case 'multiselect':
         return (
           <Select
             multiple
-            value={value}
+            displayEmpty
             input={<Input />}
             renderValue={(selected: string[]) => {
-              return selected.length === 1 ? (
+              return selected.length === 0 ? (
                 <span>None</span>
               ) : (
                 selected
@@ -130,7 +129,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             {...common_props}
             {...input_props}
           >
-            <MenuItem disabled value="">
+            <MenuItem disabled>
               <span>None</span>
             </MenuItem>
             {items.map(({ value, label, icon }, index) => {

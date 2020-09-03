@@ -17,7 +17,7 @@ export type FormElementType =
 export type placement = 'center' | 'flex-start' | 'flex-end';
 
 export interface Items {
-  value: any;
+  value: string;
   label: string;
   icon: any;
 }

@@ -78,9 +78,13 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
       } else {
         let default_value = null;
         const is_number = type.match(/^(slider|number)$/);
-        const is_text = type.match(/^(textarea|text|select)$/);
-        const is_bool = type.match(/^(radio|checkbox|switch)$/);
+        const is_text = type.match(/^(radio|textarea|text|select)$/);
+        const is_bool = type.match(/^(checkbox|switch)$/);
         const is_arr = type.match(/^(multiselect)$/);
+        const items =
+          type.match(/(radio|select)/) &&
+          input.items &&
+          input.items.map(item => item.value);
         if (is_number) {
           schemaShape[key] = Yup.number().strict(true);
           default_value = 0;
@@ -92,10 +96,25 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
           default_value = false;
         } else if (is_arr) {
           schemaShape[key] = Yup.array()
-            .of(Yup.string())
+            .of(Yup.string().strict(true))
             .strict(true);
-          default_value = [''];
+          default_value = [];
         }
+        if (items && input.items) {
+          schemaShape[key] = schemaShape[key].test({
+            name: 'Oneof checker',
+            message: `\${path} must be one of ${input.items
+              .map(item => item.label)
+              .join(',')} `,
+            test: function(values: any) {
+              return (!required && values === undefined) ||
+                Array.isArray(values)
+                ? values.every((val: string) => items.includes(val))
+                : items.includes(values);
+            },
+          });
+        }
+
         if (required)
           schemaShape[key] = schemaShape[key].required(
             `${label} is a required field`
@@ -120,7 +139,6 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         index
       )
     );
-    console.log(initialValues);
     return {
       initialValues,
       initialErrors,
