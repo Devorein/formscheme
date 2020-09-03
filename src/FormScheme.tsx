@@ -53,7 +53,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         types.forEach(
           type => (attacher[type][isArray ? index : name] = useArray ? [] : {})
         );
-        schemaShape[name] = Yup.object();
+        schemaShape[name] = useArray ? Yup.array() : Yup.object();
         full_path += `${
           isArray ? `[${index}]` : `${full_path ? `.${name}` : name}`
         }`;
@@ -73,7 +73,9 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
             _index
           )
         );
-        schemaShape[name] = schemaShape[name].shape(shape);
+        schemaShape[name] = schemaShape[name][useArray ? 'of' : 'shape'](
+          useArray ? Object.values(shape)[0] : shape
+        );
       } else {
         const is_number = type.match(/(slider|number)/);
         const is_text = type.match(/(textarea|text|select)/);
