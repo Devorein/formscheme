@@ -19,7 +19,7 @@ function setObjectValues(
 
 export function generateFormSchemeInputDefaultConfigs(
   input: FormSchemeInputPartial,
-  full_path: string,
+  full_path: string = '',
   parent: undefined | FormSchemeInputFull,
   index: number | undefined = 0
 ) {
@@ -79,17 +79,13 @@ export function generateFormSchemeInputDefaultConfigs(
       .join(' ');
 
   if (!input.key) input.key = full_path + input.name + index;
-
+  const key = parent && parent.useArray ? index : input.name;
   if (input.type === 'radio' && (input?.radioItems ?? [])?.length === 0)
     throw new Error('Radio component must have radio items');
   if (input.type === 'select' && (input?.selectItems ?? [])?.length === 0)
     throw new Error('Select component must have select items');
   (input as FormSchemeInputFull).full_path =
-    full_path +
-    `${
-      parent ? (parent.useArray ? `[${index}]` : `.${input.name}`) : input.name
-    }`;
-  // console.log((input as FormSchemeInputFull).full_path);
+    full_path + `${parent ? `.${key}` : key}`;
   return input as FormSchemeInputFull;
 }
 

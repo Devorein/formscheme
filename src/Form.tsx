@@ -193,7 +193,6 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     } = input;
     const { disabled, required } = input;
     const { error, touched } = getFieldMeta(full_path);
-
     if (disabled && required)
       throw new Error('Required fields cannot be disabled');
     return (
