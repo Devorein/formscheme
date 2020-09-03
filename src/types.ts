@@ -16,15 +16,10 @@ export type FormElementType =
 
 export type placement = 'center' | 'flex-start' | 'flex-end';
 
-export interface SelectItems {
+export interface Items {
   value: any;
   label: string;
   icon: any;
-}
-
-export interface RadioItems {
-  value: any;
-  label: string;
 }
 
 export interface FormSchemeInputFull {
@@ -44,8 +39,7 @@ export interface FormSchemeInputFull {
   siblings: FormSchemeInputFull[];
   useObject: boolean;
   useArray: boolean;
-  selectItems: SelectItems[];
-  radioItems: RadioItems[];
+  items: Items[];
   treeView: boolean;
   collapse: boolean;
   append: boolean;
@@ -77,8 +71,7 @@ export interface FormSchemeInputPartial {
   siblings?: FormSchemeInputPartial[];
   useObject?: boolean;
   useArray?: boolean;
-  selectItems?: SelectItems[];
-  radioItems?: RadioItems[];
+  items?: Items[];
   treeView?: boolean;
   collapse?: boolean;
   append?: boolean;

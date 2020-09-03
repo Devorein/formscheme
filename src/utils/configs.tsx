@@ -62,8 +62,7 @@ export function generateFormSchemeInputDefaultConfigs(
     ['touched', false],
     ['required', false],
     ['error', false],
-    ['selectItems', []],
-    ['radioItems', []],
+    ['items', []],
     ['labelPlacement', placemant],
     ['helperTextPlacement', placemant],
     ['errorTextPlacement', placemant],
@@ -80,10 +79,15 @@ export function generateFormSchemeInputDefaultConfigs(
 
   if (!input.key) input.key = full_path + input.name + index;
   const key = parent && parent.useArray ? index : input.name;
-  if (input.type === 'radio' && (input?.radioItems ?? [])?.length === 0)
-    throw new Error('Radio component must have radio items');
-  if (input.type === 'select' && (input?.selectItems ?? [])?.length === 0)
-    throw new Error('Select component must have select items');
+  if (
+    input?.type?.match(/(radio|select)/) &&
+    (input?.items ?? [])?.length === 0
+  )
+    throw new Error(
+      `${input.type.charAt(0).toUpperCase() +
+        input.type.substr(1)} component must have ${input.type} items`
+    );
+
   (input as FormSchemeInputFull).full_path =
     full_path + `${parent ? `.${key}` : key}`;
   return input as FormSchemeInputFull;

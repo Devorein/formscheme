@@ -10,6 +10,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
+import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormGroup from '@material-ui/core/FormGroup';
 import Icon from '@material-ui/core/Icon';
@@ -67,8 +68,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       fieldHandler,
       component,
       input_props,
-      selectItems,
-      radioItems,
+      items,
       key,
       controlled,
       onKeyPress,
@@ -91,13 +91,49 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       common_props.onKeyPress = onKeyPress;
       common_props.onChange = fieldHandler;
     }
+    const labels: Record<string, any> = {};
+    if (type.match(/(select|radio)/))
+      items.forEach(item => (labels[item.value] = item.label));
+
     switch (type) {
       case 'component':
         return component;
       case 'select':
         return (
           <Select {...common_props} {...input_props}>
-            {selectItems.map(({ value, label, icon }, index) => {
+            {items.map(({ value, label, icon }, index) => {
+              return (
+                <MenuItem key={key + label + index} value={value}>
+                  {icon ? <Icon>{icon}</Icon> : null}
+                  {label}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        );
+      case 'multiselect':
+        return (
+          <Select
+            multiple
+            value={value}
+            input={<Input />}
+            renderValue={(selected: string[]) => {
+              return selected.length === 1 ? (
+                <span>None</span>
+              ) : (
+                selected
+                  .filter(selected => selected !== '')
+                  .map(selected => labels[selected])
+                  .join(', ')
+              );
+            }}
+            {...common_props}
+            {...input_props}
+          >
+            <MenuItem disabled value="">
+              <span>None</span>
+            </MenuItem>
+            {items.map(({ value, label, icon }, index) => {
               return (
                 <MenuItem key={key + label + index} value={value}>
                   {icon ? <Icon>{icon}</Icon> : null}
@@ -142,7 +178,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       case 'radio':
         return (
           <RadioGroup row {...common_props} {...input_props}>
-            {radioItems.map(({ label, value }, index) => (
+            {items.map(({ label, value }, index) => (
               <FormControlLabel
                 key={key + label + index}
                 control={<Radio color="primary" />}

@@ -77,9 +77,10 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
           .strict(true);
       } else {
         let default_value = null;
-        const is_number = type.match(/(slider|number)/);
-        const is_text = type.match(/(textarea|text|select)/);
-        const is_bool = type.match(/(radio|checkbox|switch)/);
+        const is_number = type.match(/^(slider|number)$/);
+        const is_text = type.match(/^(textarea|text|select)$/);
+        const is_bool = type.match(/^(radio|checkbox|switch)$/);
+        const is_arr = type.match(/^(multiselect)$/);
         if (is_number) {
           schemaShape[key] = Yup.number().strict(true);
           default_value = 0;
@@ -89,6 +90,11 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         } else if (is_bool) {
           schemaShape[key] = Yup.bool().strict(true);
           default_value = false;
+        } else if (is_arr) {
+          schemaShape[key] = Yup.array()
+            .of(Yup.string())
+            .strict(true);
+          default_value = [''];
         }
         if (required)
           schemaShape[key] = schemaShape[key].required(
@@ -114,6 +120,7 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         index
       )
     );
+    console.log(initialValues);
     return {
       initialValues,
       initialErrors,
