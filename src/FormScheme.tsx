@@ -13,6 +13,9 @@ import {
   generateFormSchemePropsDefaultConfigs,
 } from './utils/configs';
 
+import convertToArray from './utils/convertToArray';
+export { convertToArray };
+
 function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
   const populateInitialValue = () => {
     const { inputs } = props.FORMSCHEME_PROPS;
@@ -42,7 +45,6 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
         name,
         touched,
         defaultValue,
-        // useArray,
         required,
         label,
         error,
@@ -116,7 +118,11 @@ function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
       initialValues,
       initialErrors,
       initialTouched,
-      validationSchema: Yup.object().shape(initialValidationSchemaShape),
+      validationSchema: Yup.object()
+        .shape(initialValidationSchemaShape)
+        .required()
+        .noUnknown()
+        .strict(true),
     };
   };
 
