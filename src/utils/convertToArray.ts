@@ -6,17 +6,17 @@ function isPOJO(arg: any): boolean {
 }
 
 export default function convertToArray(object: Record<string, any>) {
-  function inner(object: Record<string, any>) {
-    const entries = Object.entries(object);
+  const res = JSON.parse(JSON.stringify(object));
+  function inner(_object: Record<string, any>) {
+    const entries = Object.entries(_object);
     entries.forEach(([key, value]) => {
-      if (isPOJO(value)) object[key] = inner(value);
-    })
+      if (isPOJO(value)) _object[key] = inner(value);
+    });
     const array_like = entries.every(([key], i) => parseInt(key) === i);
-    if (array_like)
-      return Array.from({ ...object, length: entries.length })
-    else return object
+    if (array_like) return Array.from({ ..._object, length: entries.length });
+    else return _object;
   }
 
-  inner(object);
-  return object;
+  inner(res);
+  return res;
 }
