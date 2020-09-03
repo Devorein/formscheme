@@ -82,7 +82,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       value,
       onBlur: handleBlur,
       disabled,
-      className: className || `FormScheme-content-container-component-${type}`,
+      className: className || `FormScheme-input-container-${type}`,
     };
 
     if (type !== 'slider') common_props.onChange = handleChange;
@@ -193,11 +193,12 @@ function Form(props: FormPropsFull<Record<string, any>>) {
     } = input;
     const { disabled, required } = input;
     const { error, touched } = getFieldMeta(full_path);
+    const show_error = type !== 'group' && error && touched;
     if (disabled && required)
       throw new Error('Required fields cannot be disabled');
     return (
       <FormControl
-        className={className || `FormScheme-content-container`}
+        className={className || `FormScheme-input`}
         key={key}
         disabled={disabled}
         fullWidth
@@ -220,7 +221,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
           <FormHelperText
             required={required}
             disabled={disabled}
-            className={'FormScheme-content-container-helpertext'}
+            className={'FormScheme-input-helpertext'}
             style={{
               display: 'flex',
               fontSize: '1rem',
@@ -230,48 +231,54 @@ function Form(props: FormPropsFull<Record<string, any>>) {
             {helperText}
           </FormHelperText>
         )}
-        {type === 'group' ? (
-          treeView ? (
-            <TreeView
-              defaultCollapseIcon={treeViewCollapseIcon}
-              defaultExpandIcon={treeViewExpandIcon}
-              defaultExpanded={[collapse ? '0' : '1']}
-              onNodeToggle={e => {
-                const parent = (e.target as any).parentElement.parentElement;
-                (e.target as any).textContent = !parent.nextElementSibling
-                  ? 'Collapse'
-                  : 'Expand';
-              }}
-            >
-              <TreeItem
-                nodeId="1"
-                label={
-                  <div style={{ width: 'calc(100% - 25px)' }}>
-                    {collapse ? 'Expand' : 'Collapse'}
-                  </div>
-                }
+        <div
+          className="Formscheme-input-container"
+          style={{ marginBottom: show_error ? 0 : 22.5 }}
+        >
+          {type === 'group' ? (
+            treeView ? (
+              <TreeView
+                defaultCollapseIcon={treeViewCollapseIcon}
+                defaultExpandIcon={treeViewExpandIcon}
+                defaultExpanded={[collapse ? '0' : '1']}
+                onNodeToggle={e => {
+                  const parent = (e.target as any).parentElement.parentElement;
+                  (e.target as any).textContent = !parent.nextElementSibling
+                    ? 'Collapse'
+                    : 'Expand';
+                }}
               >
-                <FormGroup row={false}>
-                  {children.map(child => renderFormGroup(child))}
-                </FormGroup>
-              </TreeItem>
-            </TreeView>
+                <TreeItem
+                  nodeId="1"
+                  label={
+                    <div style={{ width: 'calc(100% - 25px)' }}>
+                      {collapse ? 'Expand' : 'Collapse'}
+                    </div>
+                  }
+                >
+                  <FormGroup row={false}>
+                    {children.map(child => renderFormGroup(child))}
+                  </FormGroup>
+                </TreeItem>
+              </TreeView>
+            ) : (
+              <FormGroup row={true}>
+                {children.map(child => renderFormGroup(child))}
+              </FormGroup>
+            )
           ) : (
-            <FormGroup row={true}>
-              {children.map(child => renderFormGroup(child))}
-            </FormGroup>
-          )
-        ) : (
-          renderFormGroupItem(input)
-        )}
-        {type !== 'group' && error && touched && (
+            renderFormGroupItem(input)
+          )}
+        </div>
+
+        {show_error && (
           <FormHelperText
-            className={'FormScheme-content-container-errorText'}
+            className={'FormScheme-input-errorText'}
             error={true}
             disabled={disabled}
             style={{
               display: 'flex',
-              fontSize: '1rem',
+              fontSize: '.75rem',
               fontWeight: 'bold',
               justifyContent: errorTextPlacement,
             }}
@@ -300,7 +307,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         handleReset();
       }}
     >
-      <div className={`Formscheme-content`}>
+      <div className={`Formscheme-inputs`}>
         {inputs.map(input => renderFormGroup(input))}
         {children}
       </div>
