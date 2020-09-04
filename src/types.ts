@@ -1,6 +1,9 @@
 import { ReactElement, ReactNode } from 'react';
 import { FormikConfig, FormikProps } from 'formik/dist/types';
 
+/**
+ * All the types of inputs available
+ */
 export type FormElementType =
   | 'checkbox'
   | 'select'
@@ -14,8 +17,14 @@ export type FormElementType =
   | 'textarea'
   | 'switch';
 
+/**
+ * All the types of placement available
+ */
 export type placement = 'center' | 'flex-start' | 'flex-end';
 
+/**
+ * Items interface for inputs that requires items
+ */
 export interface Items {
   value: string;
   label: string;
@@ -23,6 +32,7 @@ export interface Items {
 }
 
 export interface FormSchemeInputFull {
+  name: string;
   disabled: boolean;
   required: boolean;
   className: string | undefined;
@@ -32,7 +42,6 @@ export interface FormSchemeInputFull {
   helperText: undefined | string;
   defaultValue: any;
   label: undefined | string;
-  name: string;
   controlled: boolean;
   onKeyPress: () => any;
   fieldHandler: (value: any) => any;
@@ -47,7 +56,7 @@ export interface FormSchemeInputFull {
   touched: boolean;
   error: string;
   key: string;
-  component: JSX.Element;
+  component: undefined | JSX.Element;
   full_path: string;
   labelPlacement: placement;
   helperTextPlacement: placement;
@@ -55,86 +64,44 @@ export interface FormSchemeInputFull {
   row: boolean;
 }
 
-export interface FormSchemeInputPartial {
-  disabled?: boolean;
-  className?: string;
-  required?: boolean;
-  children?: FormSchemeInputsPartial;
-  placeholder?: string;
-  type?: FormElementType;
-  helperText?: undefined | string;
-  defaultValue?: string;
-  label: undefined | string;
-  name: string;
-  controlled?: boolean;
-  onKeyPress?: () => any;
-  fieldHandler?: (value: any) => any;
-  siblings?: FormSchemeInputPartial[];
-  useObject?: boolean;
-  useArray?: boolean;
-  items?: Items[];
-  treeView?: boolean;
-  collapse?: boolean;
-  append?: boolean;
-  input_props?: any;
-  touched?: boolean;
-  error?: string;
-  key?: string;
-  component?: JSX.Element;
-  labelPlacement?: placement;
-  helperTextPlacement?: placement;
-  errorTextPlacement?: placement;
-  row?: boolean;
-}
+export type FormSchemeInputPartial = { name: string } & Partial<FormSchemeInputFull>;
 
 export type FormSchemeInputsPartial = FormSchemeInputPartial[];
 export type FormSchemeInputsFull = FormSchemeInputFull[];
 
-export interface FormSchemePropsPartial<Values> {
-  FORMIK_CONFIGS: FormikConfig<Values>;
-  FORMSCHEME_PROPS: {
-    inputs: FormSchemeInputsPartial;
-    formButtons?: boolean;
-    classNames?: string;
-    errorBeforeTouched?: boolean;
-    submitMsg?: string;
-    submitButton?: true;
-    resetMsg?: string;
-    resetButton?: true;
-    disabled?: boolean;
-    submitTimeout?: number;
-    treeViewExpandIcon?: JSX.Element;
-    treeViewCollapseIcon?: JSX.Element;
-    centerButtons?: boolean;
-  };
-  children?: ReactNode | ((props: any) => ReactElement<any> | null);
+export interface FormSchemePropsFull {
+  inputs: FormSchemeInputsFull;
+  formButtons: boolean;
+  classNames: undefined | string;
+  errorBeforeTouched: boolean;
+  submitMsg: string;
+  resetMsg: string;
+  submitButton: true;
+  resetButton: true;
+  disabled: boolean;
+  submitTimeout: undefined | number;
+  treeViewExpandIcon: JSX.Element;
+  treeViewCollapseIcon: JSX.Element;
+  centerButtons: boolean;
 }
 
-export interface FormSchemePropsFull<Values> {
+export interface FormSchemeAllPropsFull<Values> {
   FORMIK_CONFIGS: FormikConfig<Values>;
-  FORMSCHEME_PROPS: {
-    inputs: FormSchemeInputsFull;
-    formButtons: boolean;
-    classNames: undefined | string;
-    errorBeforeTouched: boolean;
-    submitMsg: string;
-    resetMsg: string;
-    submitButton: true;
-    resetButton: true;
-    disabled: boolean;
-    submitTimeout: undefined | number;
-    treeViewExpandIcon: JSX.Element;
-    treeViewCollapseIcon: JSX.Element;
-    centerButtons: boolean;
-  };
+  FORMSCHEME_PROPS: FormSchemePropsFull;
   children: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
 }
 
+export type FormSchemeAllPropsPartial<Values> = {
+  FORMIK_CONFIGS?: FormikConfig<Values>;
+  FORMSCHEME_PROPS: { inputs: FormSchemeInputsPartial } & Partial<FormSchemePropsFull>;
+  children?: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
+};
+
 export interface FormPropsPartial<Values>
-  extends FormSchemePropsPartial<Values> {
+  extends FormSchemeAllPropsPartial<Values> {
   FORMIK_PROPS: FormikProps<Values>;
 }
 
-export interface FormPropsFull<Values> extends FormSchemePropsFull<Values> {
+export interface FormPropsFull<Values> extends FormSchemeAllPropsFull<Values> {
   FORMIK_PROPS: FormikProps<Values>;
 }

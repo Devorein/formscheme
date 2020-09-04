@@ -1,8 +1,8 @@
 import {
   FormSchemeInputFull,
   FormSchemeInputPartial,
-  FormSchemePropsPartial,
-  FormSchemePropsFull,
+  FormSchemeAllPropsPartial,
+  FormSchemeAllPropsFull,
 } from '../types';
 import React from 'react';
 
@@ -95,7 +95,7 @@ export function generateFormSchemeInputDefaultConfigs(
 }
 
 export function generateFormSchemePropsDefaultConfigs(
-  props: FormSchemePropsPartial<Record<string, any>>
+  props: FormSchemeAllPropsPartial<Record<string, any>>
 ) {
   const res: any = {
     FORMSCHEME_PROPS: {},
@@ -119,5 +119,5 @@ export function generateFormSchemePropsDefaultConfigs(
     ['treeViewCollapseIcon', <div>{'▶'}</div>],
     ['centerButtons', true],
   ]);
-  return res as FormSchemePropsFull<Record<string, any>>;
+  return res as FormSchemeAllPropsFull<Record<string, any>>;
 }
