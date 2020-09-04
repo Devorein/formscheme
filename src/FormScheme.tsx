@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 
 import Form from './Form';
 import {
-  FormSchemePropsPartial,
+  FormSchemeAllPropsPartial,
   FormSchemeInputPartial,
   FormSchemeInputFull,
 } from './types';
@@ -16,7 +16,7 @@ import {
 import convertToArray from './utils/convertToArray';
 export { convertToArray };
 
-function FormScheme(props: FormSchemePropsPartial<Record<string, any>>) {
+function FormScheme(props: FormSchemeAllPropsPartial<Record<string, any>>) {
   const populateInitialValue = () => {
     const { inputs } = props.FORMSCHEME_PROPS;
     const initialValues: Record<string, any> = {};
