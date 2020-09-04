@@ -117,7 +117,7 @@ export function generateFormSchemePropsDefaultConfigs(
     'submitTimeout',
     ['treeViewExpandIcon', <div>{'⯆'}</div>],
     ['treeViewCollapseIcon', <div>{'▶'}</div>],
-    ['centerButtons', true],
+    ['formButtonsPlacement', 'center'],
   ]);
   return res as FormSchemeAllPropsFull<Record<string, any>>;
 }

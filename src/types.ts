@@ -124,8 +124,8 @@ export interface FormSchemePropsFull {
   treeViewExpandIcon: JSX.Element;
   /**Treeview collapse icon */
   treeViewCollapseIcon: JSX.Element;
-  /**Center the form buttons */
-  centerButtons: boolean;
+  /**For buttons placement */
+  formButtonsPlacement: placement;
 }
 
 export interface FormSchemeAllPropsFull<Values> {

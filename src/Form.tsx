@@ -56,7 +56,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       submitTimeout,
       treeViewCollapseIcon,
       treeViewExpandIcon,
-      centerButtons,
+      formButtonsPlacement,
     },
     children,
   } = props;
@@ -356,13 +356,16 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         {inputs.map(input => renderFormGroup(input))}
         {children}
       </div>
-      <div className={`Formscheme-buttons`}>
+      <div
+        className={`Formscheme-buttons`}
+        style={{ display: 'flex', justifyContent: formButtonsPlacement }}
+      >
         {formButtons && (
           <FormGroup
             row={true}
-            style={
-              centerButtons ? { width: 'fit-content', margin: '0 auto' } : {}
-            }
+            style={{
+              width: 'fit-content',
+            }}
           >
             {resetButton && (
               <Button
