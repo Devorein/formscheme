@@ -125,10 +125,10 @@ function FormScheme(props: FormSchemeAllPropsPartial<Record<string, any>>) {
         attacher.errors[key] = error;
         full_path += name;
 
-        try{
-          schemaShape[key].validateSync(attacher.values[key])
-        }catch(err){
-          attacher.errors[key] = err.errors[0].replace('this',label);
+        try {
+          schemaShape[key].validateSync(attacher.values[key]);
+        } catch (err) {
+          attacher.errors[key] = err.errors[0].replace('this', label);
         }
       }
     }
