@@ -45,13 +45,14 @@ export interface FormSchemeInputFull {
   append: boolean;
   input_props: any;
   touched: boolean;
-  error: boolean;
+  error: string;
   key: string;
   component: JSX.Element;
   full_path: string;
   labelPlacement: placement;
   helperTextPlacement: placement;
   errorTextPlacement: placement;
+  row: boolean;
 }
 
 export interface FormSchemeInputPartial {
@@ -77,12 +78,13 @@ export interface FormSchemeInputPartial {
   append?: boolean;
   input_props?: any;
   touched?: boolean;
-  error?: boolean;
+  error?: string;
   key?: string;
   component?: JSX.Element;
   labelPlacement?: placement;
   helperTextPlacement?: placement;
   errorTextPlacement?: placement;
+  row?: boolean;
 }
 
 export type FormSchemeInputsPartial = FormSchemeInputPartial[];

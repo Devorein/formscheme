@@ -225,6 +225,7 @@ function Form(props: FormPropsFull<Record<string, any>>) {
       helperTextPlacement,
       errorTextPlacement,
       full_path,
+      row,
     } = input;
     const { disabled, required } = input;
     const { error, touched } = getFieldMeta(full_path);
@@ -238,34 +239,41 @@ function Form(props: FormPropsFull<Record<string, any>>) {
         disabled={disabled}
         fullWidth
         margin={'normal'}
+        style={{ flexDirection: row ? 'row' : 'column' }}
       >
-        <FormLabel
-          style={{
-            display: 'flex',
-            fontWeight: 'bold',
-            fontSize: '1.2rem',
-            justifyContent: labelPlacement,
-          }}
-          disabled={disabled}
-          required={required}
-          component="label"
+        <div
+          className="FormScheme-input-label_helpertext"
+          style={{ marginRight: 10 }}
         >
-          {label}
-        </FormLabel>
-        {helperText && (
-          <FormHelperText
-            required={required}
-            disabled={disabled}
-            className={'FormScheme-input-helpertext'}
+          <FormLabel
             style={{
               display: 'flex',
-              fontSize: '1rem',
-              justifyContent: helperTextPlacement,
+              fontWeight: 'bold',
+              fontSize: '1.2rem',
+              justifyContent: labelPlacement,
             }}
+            className="FormScheme-input-label"
+            disabled={disabled}
+            required={required}
+            component="label"
           >
-            {helperText}
-          </FormHelperText>
-        )}
+            {label}
+          </FormLabel>
+          {helperText && (
+            <FormHelperText
+              required={required}
+              disabled={disabled}
+              className={'FormScheme-input-helpertext'}
+              style={{
+                display: 'flex',
+                fontSize: '1rem',
+                justifyContent: helperTextPlacement,
+              }}
+            >
+              {helperText}
+            </FormHelperText>
+          )}
+        </div>
         <div
           className="Formscheme-input-container"
           style={{ marginBottom: show_error ? 0 : 22.5 }}
@@ -316,6 +324,8 @@ function Form(props: FormPropsFull<Record<string, any>>) {
               fontSize: '.75rem',
               fontWeight: 'bold',
               justifyContent: errorTextPlacement,
+              alignItems: 'center',
+              marginLeft: row ? 10 : 0,
             }}
           >
             {error}
