@@ -119,10 +119,17 @@ function FormScheme(props: FormSchemeAllPropsPartial<Record<string, any>>) {
           schemaShape[key] = schemaShape[key].required(
             `${label} is a required field`
           );
+
         attacher.values[key] = defaultValue || default_value;
         attacher.touched[key] = touched;
         attacher.errors[key] = error;
         full_path += name;
+
+        try{
+          schemaShape[key].validateSync(attacher.values[key])
+        }catch(err){
+          attacher.errors[key] = err.errors[0].replace('this',label);
+        }
       }
     }
     inputs.forEach((input, index) =>

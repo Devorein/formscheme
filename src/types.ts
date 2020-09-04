@@ -92,9 +92,7 @@ export interface FormSchemeInputPartial {
   row?: boolean;
 }
 
-export type FormSchemeInputFull = Required<
-  FormSchemeInputPartial
->;
+export type FormSchemeInputFull = Required<FormSchemeInputPartial>;
 
 export type FormSchemeInputsPartial = FormSchemeInputPartial[];
 export type FormSchemeInputsFull = FormSchemeInputFull[];
