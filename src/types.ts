@@ -31,114 +31,112 @@ export interface Items {
   icon: any;
 }
 
-export interface FormSchemeInputFull {
+export interface FormSchemeInputPartial {
   /**Name of the input (this is used to build the full path to the input for Formik) */
   name: string;
   /**Disable the input, also effects all of its children */
-  disabled: boolean;
+  disabled?: boolean;
   /**Makes the input required, MUI adds * to required inputs */
-  required: boolean;
+  required?: boolean;
   /**Custom classname to be attached to the input */
-  className: string | undefined;
+  className?: string | undefined;
   /**Children of the input, only use if the type is group */
-  children: FormSchemeInputsFull;
+  children?: FormSchemeInputsFull;
   /**Placeholder value used in the input */
-  placeholder: string;
+  placeholder?: string;
   /**Type of the input field */
-  type: FormElementType;
+  type?: FormElementType;
   /**Used to give relevant information regarding the input */
-  helperText: undefined | string;
+  helperText?: undefined | string;
   /**Default value of the input, used to build up the initialValues for Formik */
-  defaultValue: any;
+  defaultValue?: any;
   /**Label of the input, if npt provided generated from the name */
-  label: undefined | string;
+  label?: undefined | string;
   /**Whether the input is controlled by Formik or not */
-  controlled: boolean;
+  controlled?: boolean;
   /**Used to control the form when not controlled */
-  onKeyPress: () => any;
+  onKeyPress?: () => any;
   /**Used to control the form when not controlled*/
-  fieldHandler: (value: any) => any;
+  fieldHandler?: (value: any) => any;
   /**If true uses an object with [name] keys in the initialValues */
-  useObject: boolean;
+  useObject?: boolean;
   /**If true uses an object with [index] keys in the initialValues */
-  useArray: boolean;
+  useArray?: boolean;
   /**Provide items if the input type supports it */
-  items: Items[];
+  items?: Items[];
   /**If true uses MUI TreeView to group form inputs */
-  treeView: boolean;
+  treeView?: boolean;
   /**Initial state of the treeView if present */
-  collapse: boolean;
+  collapse?: boolean;
   /**Used to group inputs together without the effect of useObject or useArray */
-  append: boolean;
+  append?: boolean;
   /**Extra input props passed to the input */
-  input_props: any;
+  input_props?: any;
   /**Used to populate the initialTouched for Formik */
-  touched: boolean;
+  touched?: boolean;
   /**Used to populate the initialErrors for Formik */
-  error: string;
+  error?: string;
   /**Uses the key provided, auto generated from full_path */
-  key: string;
+  key?: string;
   /**Required if type is component, completelly undetected by Formik */
-  component: undefined | JSX.Element;
+  component?: undefined | JSX.Element;
   /**Full path of the input used for Formik */
-  full_path: string;
+  full_path?: string;
   /**Placement of the label */
-  labelPlacement: placement;
+  labelPlacement?: placement;
   /**Placement of the helperText */
-  helperTextPlacement: placement;
+  helperTextPlacement?: placement;
   /**Placement of the errorText */
-  errorTextPlacement: placement;
+  errorTextPlacement?: placement;
   /**Places labels, input, helpertext and errorText along a row */
-  row: boolean;
+  row?: boolean;
 }
 
-export type FormSchemeInputPartial = { name: string } & Partial<
-  FormSchemeInputFull
+export type FormSchemeInputFull = Required<
+  FormSchemeInputPartial
 >;
 
 export type FormSchemeInputsPartial = FormSchemeInputPartial[];
 export type FormSchemeInputsFull = FormSchemeInputFull[];
 
-export interface FormSchemePropsFull {
+export interface FormSchemePropsPartial {
   /**Inputs passed to the FormScheme */
   inputs: FormSchemeInputsFull;
   /**Whether or not formButtons should be used */
-  formButtons: boolean;
+  formButtons?: boolean;
   /**Custom classnames of the form */
-  classNames: undefined | string;
+  classNames?: undefined | string;
   /**Whether or not errors should be populated without touching the input */
-  errorBeforeTouched: boolean;
+  errorBeforeTouched?: boolean;
   /**Submit text */
-  submitMsg: string;
+  submitMsg?: string;
   /**Reset text */
-  resetMsg: string;
+  resetMsg?: string;
   /**Show submit button */
-  submitButton: boolean;
+  submitButton?: boolean;
   /**Show reset button */
-  resetButton: boolean;
+  resetButton?: boolean;
   /**Disable the whole form */
-  disabled: boolean;
+  disabled?: boolean;
   /**Time in ms the form is locked after submitting */
-  submitTimeout: undefined | number;
+  submitTimeout?: undefined | number;
   /**Treeview expand icon */
-  treeViewExpandIcon: JSX.Element;
+  treeViewExpandIcon?: JSX.Element;
   /**Treeview collapse icon */
-  treeViewCollapseIcon: JSX.Element;
+  treeViewCollapseIcon?: JSX.Element;
   /**For buttons placement */
-  formButtonsPlacement: placement;
+  formButtonsPlacement?: placement;
 }
 
 export interface FormSchemeAllPropsFull<Values> {
   FORMIK_CONFIGS: FormikConfig<Values>;
-  FORMSCHEME_PROPS: FormSchemePropsFull;
+  FORMSCHEME_PROPS: Required<FormSchemePropsPartial>;
   children: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
 }
 
 export type FormSchemeAllPropsPartial<Values> = {
   FORMIK_CONFIGS?: FormikConfig<Values>;
-  FORMSCHEME_PROPS: { inputs: FormSchemeInputsPartial } & Partial<
-    FormSchemePropsFull
-  >;
+  FORMSCHEME_PROPS: FormSchemePropsPartial;
   children?: undefined | ReactNode | ((props: any) => ReactElement<any> | null);
 };
 
